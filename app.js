@@ -1,9 +1,8 @@
 /* Greenspan Events HQ - generic, read-only event app.
    All event-specific content lives in /events/*.js (window.EVENTS). */
 
-const ROLE_CLASS = { 'Build Crew':'build', 'Customer-Facing':'custfacing', 'Both':'both' };
-const ROLE_LABEL = { 'Build Crew':'Build crew', 'Customer-Facing':'Customer-facing', 'Both':'Both' };
-const TEAM_CLASS = { 'Sales':'sales', 'Support':'support', 'N/A':'off' };
+const TYPES = ['Sales','Support','Build','Visitor'];          // staff types - a person can have several
+const TYPE_CLASS = { 'Sales':'sales', 'Support':'support', 'Build':'build', 'Visitor':'visitor' };
 const ACC_CLASS = { 'Hotel Booked':'acc-booked', 'Alternative Accommodation':'acc-alt', 'TBC':'acc-tbc' };
 const ACC_LABEL = { 'Hotel Booked':'Hotel booked', 'Alternative Accommodation':'Alternative accommodation', 'TBC':'TBC' };
 const STATUS_CLASS = { 'Open':'status-open', 'In Progress':'status-progress', 'Done':'status-done', 'Confirmed':'status-done', 'Needs content':'status-progress', 'TBC':'status-open', 'To order':'status-open', 'Ordered':'status-progress', 'On stand':'status-done' };
@@ -53,6 +52,7 @@ const ICON = {
   trash: '<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/>',
   plus:  '<path d="M12 5v14M5 12h14"/>',
   download:'<path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/>',
+  visitor:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
   total: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-3.5 3.2-5.5 6.5-5.5s6 2 6.5 5.5M16 4.5a3.5 3.5 0 0 1 0 7M18 14.8c2 .6 3.3 2.3 3.5 5.2"/>',
   build: '<path d="M14.5 6.5l3 3M3 21l7.5-7.5M13 4l7 7-3 3-7-7z"/>',
   sales: '<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>',
@@ -69,6 +69,26 @@ function metric(label, value, icon, tone){
 function initials(name){
   const p = name.trim().split(/\s+/);
   return ((p[0]||'')[0] + (p.length>1 ? p[p.length-1][0] : '')).toUpperCase();
+}
+/* ---- staff types (person level) ---- */
+function legacyTypes(name){            // old exports used role/team on each shift
+  const t = new Set();
+  shifts.filter(s=>s.name===name).forEach(s=>{
+    if (s.role==='Build Crew' || s.role==='Both') t.add('Build');
+    if (s.role==='Customer-Facing' || s.role==='Both') t.add(s.team==='Support' ? 'Support' : 'Sales');
+    if (s.team==='Sales' || s.team==='Support') t.add(s.team);
+  });
+  return [...t];
+}
+function personTypes(name){
+  const p = (EVENT.people||[]).find(x=>x.name===name);
+  const arr = p ? (p.types||[]) : legacyTypes(name);
+  return TYPES.filter(t=>arr.includes(t));
+}
+function typeBadges(name, grey){
+  const t = personTypes(name);
+  if (!t.length) return EDIT ? '<span class="badge off">Set type</span>' : '&ndash;';
+  return t.map(x=>`<span class="badge ${grey ? 'off' : TYPE_CLASS[x]}">${x}</span>`).join(' ');
 }
 function phaseClass(p){
   const t = (p||'').toLowerCase();
@@ -107,7 +127,7 @@ function recomputeDays(){
 function loadEvent(id){
   EVENT = getEvents().find(e=>e.id===id);
   // arrays live on the event object itself, so edits (admin mode) survive switching events
-  ['shifts','accom','flights','actions','links','info','days'].forEach(k=>{ EVENT[k] = EVENT[k] || []; });
+  ['shifts','accom','flights','actions','links','info','days','people'].forEach(k=>{ EVENT[k] = EVENT[k] || []; });
   shifts = EVENT.shifts; accom = EVENT.accom; flights = EVENT.flights; actions = EVENT.actions; links = EVENT.links;
   activeDay = null;
   document.title = `${EVENT.title} | Greenspan Events HQ`;
@@ -202,14 +222,12 @@ function renderDaystrip(){
 }
 
 function renderSummary(){
-  const key = s => s.name.trim().toLowerCase();
-  const names = new Set(shifts.map(key).filter(Boolean));
-  const buildOnly = new Set(shifts.filter(s=>s.role==='Build Crew').map(key));
-  const sales = new Set(shifts.filter(s=>s.team==='Sales').map(key));
-  const support = new Set(shifts.filter(s=>s.team==='Support').map(key));
+  const names = getAllNames();
+  const count = t => names.filter(n=>personTypes(n).includes(t)).length;
   $('summaryRow').innerHTML =
-    metric('Total staff', names.size, 'total', 'lav') + metric('Build crew', buildOnly.size, 'build', 'teal') +
-    metric('Sales', sales.size, 'sales', 'peach') + metric('Support', support.size, 'support', 'pink');
+    metric('Total people', names.length, 'total', 'lav') + metric('Sales', count('Sales'), 'sales', 'peach') +
+    metric('Support', count('Support'), 'support', 'pink') + metric('Build', count('Build'), 'build', 'teal') +
+    metric('Visitor', count('Visitor'), 'visitor', 'blue');
 }
 
 function renderTable(){
@@ -223,14 +241,13 @@ function renderTable(){
   countEl.textContent = rows.length ? `${rows.length} shift${rows.length===1?'':'s'}` : '';
   const body = $('rotaBody');
   if (!rows.length){
-    body.innerHTML = `<tr class="empty"><td colspan="7">No shifts ${activeDay ? 'on this day' : 'yet'}.</td></tr>`;
+    body.innerHTML = `<tr class="empty"><td colspan="6">No shifts ${activeDay ? 'on this day' : 'yet'}.</td></tr>`;
     return;
   }
   body.innerHTML = rows.map(s=>`
     <tr>
       <td data-label="Name"><button class="person-link" data-person="${escapeHtml(s.name)}">${escapeHtml(s.name)}</button></td>
-      <td data-label="Role"><span class="badge ${s.activity==='Off' ? 'off' : ROLE_CLASS[s.role]}">${ROLE_LABEL[s.role]}</span></td>
-      <td data-label="Team">${s.team && s.team !== 'N/A' ? `<span class="badge ${TEAM_CLASS[s.team]}">${escapeHtml(s.team)}</span>` : '&ndash;'}</td>
+      <td data-label="Type">${typeBadges(s.name, s.activity==='Off')}</td>
       <td data-label="Date">${fmtDate(s.date)}</td>
       <td data-label="Activity">${escapeHtml(s.activity)}</td>
       <td data-label="Time">${timeRange(s)}</td>
@@ -304,11 +321,7 @@ function renderFlights(){
 
 /* ---------- people ---------- */
 function getAllNames(){
-  return [...new Set([...shifts.map(s=>s.name), ...accom.map(a=>a.name), ...flights.map(f=>f.name)])].sort((a,b)=>a.localeCompare(b));
-}
-function personRoleTeam(name){
-  const s = shifts.find(x=>x.name===name);
-  return { role: s ? s.role : null, team: s ? s.team : null };
+  return [...new Set([...shifts.map(s=>s.name), ...accom.map(a=>a.name), ...flights.map(f=>f.name), ...(EVENT.people||[]).map(p=>p.name)])].sort((a,b)=>a.localeCompare(b));
 }
 function daysOnSite(name){
   return new Set(shifts.filter(s=>s.name===name && s.activity!=='Off').map(s=>s.date)).size;
@@ -322,18 +335,17 @@ function renderPeople(){
   if (!names.length){ grid.innerHTML = `<div class="empty-note">No staff added for this event yet.</div>`; return; }
   const ex = EVENT.expenses;
   grid.innerHTML = names.map(name=>{
-    const { role, team } = personRoleTeam(name);
+    const types = personTypes(name);
     const days = daysOnSite(name);
     const accEntry = accom.find(a=>a.name===name);
     const accLabel = accEntry ? (ACC_LABEL[accEntry.type] || accEntry.type) : 'Not entered';
     const accClass = accEntry ? (ACC_CLASS[accEntry.type] || 'acc-tbc') : 'acc-tbc';
     return `
       <button class="person-card" data-person="${escapeHtml(name)}" type="button">
-        <div class="avatar ${role ? ROLE_CLASS[role] : 'none'}">${escapeHtml(initials(name))}</div>
+        <div class="avatar ${types.length ? TYPE_CLASS[types[0]] : 'none'}">${escapeHtml(initials(name))}</div>
         <div class="pname">${escapeHtml(name)}</div>
         <div class="ptags">
-          ${role ? `<span class="badge ${ROLE_CLASS[role]}">${ROLE_LABEL[role]}</span>` : ''}
-          ${team && team!=='N/A' ? `<span class="badge ${TEAM_CLASS[team]}">${escapeHtml(team)}</span>` : ''}
+          ${typeBadges(name)}
         </div>
         <div class="pmeta"><span><b style="color:var(--ink);">${days}</b> day${days===1?'':'s'} on site${ex ? ` &middot; ${ex.symbol}${days*ex.perDay} allowance` : ''}</span><span class="badge ${accClass}" style="font-size:11px;">${escapeHtml(accLabel)}</span></div>
       </button>`;
@@ -343,10 +355,7 @@ function renderPeople(){
 
 function openPersonModal(name){
   $('personModalTitle').textContent = name;
-  const { role, team } = personRoleTeam(name);
-  $('personTags').innerHTML = `
-    ${role ? `<span class="badge ${ROLE_CLASS[role]}">${ROLE_LABEL[role]}</span>` : ''}
-    ${team && team!=='N/A' ? `<span class="badge ${TEAM_CLASS[team]}">${escapeHtml(team)}</span>` : ''}`;
+  $('personTags').innerHTML = personTypes(name).map(t=>`<span class="badge ${TYPE_CLASS[t]}">${t}</span>`).join('') || '<span class="empty-note">No staff type set</span>';
   const mine = shifts.filter(s=>s.name===name).sort((a,b)=>a.date.localeCompare(b.date));
   $('personSchedule').innerHTML = !mine.length ? `<div class="empty-note">No shifts recorded yet.</div>` : mine.map(s=>`
     <div class="schedule-row">
@@ -379,6 +388,7 @@ function openPersonModal(name){
       ${f.notes ? `<div class="ar-detail">${escapeHtml(f.notes)}</div>` : ''}
     </div>`).join('');
   $('personModalBackdrop').classList.add('show');
+  if (window.onPersonModal) window.onPersonModal(name);
 }
 function closePersonModal(){ $('personModalBackdrop').classList.remove('show'); }
 
@@ -470,12 +480,12 @@ function renderExpenses(){
 
 /* ---------- Excel export ---------- */
 function exportExcel(){
-  const header = ['Staff Name','Role Type','Team','Date','Activity','Start Time','End Time','Location / Notes'];
+  const header = ['Staff Name','Staff Type','Date','Activity','Start Time','End Time','Location / Notes'];
   const sorted = [...shifts].sort((a,b)=> a.date===b.date ? a.name.localeCompare(b.name) : a.date.localeCompare(b.date));
   const ws = XLSX.utils.aoa_to_sheet([header, ...sorted.map(s=>[
-    s.name, s.role, s.team || 'N/A', new Date(s.date + 'T00:00:00'), s.activity, s.start, s.end, s.notes || '' ])]);
-  ws['!cols'] = [{wch:22},{wch:16},{wch:12},{wch:12},{wch:18},{wch:11},{wch:11},{wch:32}];
-  for (let r=1; r<=sorted.length; r++){ const c = ws[XLSX.utils.encode_cell({r, c:3})]; if (c) c.z = 'dd-mmm-yyyy'; }
+    s.name, personTypes(s.name).join(', '), new Date(s.date + 'T00:00:00'), s.activity, s.start, s.end, s.notes || '' ])]);
+  ws['!cols'] = [{wch:22},{wch:20},{wch:12},{wch:18},{wch:11},{wch:11},{wch:32}];
+  for (let r=1; r<=sorted.length; r++){ const c = ws[XLSX.utils.encode_cell({r, c:2})]; if (c) c.z = 'dd-mmm-yyyy'; }
 
   const accSorted = [...accom].sort((a,b)=>a.name.localeCompare(b.name));
   const aws = XLSX.utils.aoa_to_sheet([
@@ -487,7 +497,11 @@ function exportExcel(){
   for (let r=1; r<=accSorted.length; r++){
     [3,4].forEach(c=>{ const cell = aws[XLSX.utils.encode_cell({r, c})]; if (cell) cell.z = 'dd-mmm-yyyy'; });
   }
+  const names = getAllNames();
+  const pws = XLSX.utils.aoa_to_sheet([['Name','Staff Type'], ...names.map(n=>[n, personTypes(n).join(', ')])]);
+  pws['!cols'] = [{wch:24},{wch:28}];
   const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, pws, 'People');
   XLSX.utils.book_append_sheet(wb, ws, 'Staff Movements');
   XLSX.utils.book_append_sheet(wb, aws, 'Accommodation');
   if (flights.length || (EVENT.tabs||[]).includes('flights')){

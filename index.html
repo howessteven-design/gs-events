@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="vendor/xlsx.full.min.js"></script>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -131,10 +131,10 @@
     <div class="summary-row" id="summaryRow"></div>
     <div id="accessNotice"></div>
     <div class="legend">
-      <span><span class="swatch" style="background:var(--build)"></span>Build crew</span>
       <span><span class="swatch" style="background:var(--sales)"></span>Sales</span>
       <span><span class="swatch" style="background:var(--support)"></span>Support</span>
-      <span><span class="swatch" style="background:var(--both)"></span>Both (role)</span>
+      <span><span class="swatch" style="background:var(--build)"></span>Build</span>
+      <span><span class="swatch" style="background:var(--visitor)"></span>Visitor</span>
       <span><span class="swatch" style="background:var(--off)"></span>Off</span>
     </div>
     <section class="panel">
@@ -146,7 +146,7 @@
         <table id="rotaTable" data-editable>
           <thead>
             <tr>
-              <th>Staff name</th><th>Role type</th><th>Team</th><th>Date</th><th>Activity</th>
+              <th>Staff name</th><th>Type</th><th>Date</th><th>Activity</th>
               <th>Time</th><th>Location / notes</th>
             </tr>
           </thead>
@@ -199,6 +199,7 @@
   </div>
 
   <div id="peopleView" style="display:none;">
+    <div class="panel-add" data-add="people" data-label="Add person" style="margin-bottom:14px;"></div>
     <div id="peopleNotice"></div>
     <div class="people-grid" id="peopleGrid"></div>
   </div>
@@ -254,7 +255,7 @@
     <div class="summary-block"><h4>Schedule</h4><div id="personSchedule"></div></div>
     <div class="summary-block"><h4>Accommodation</h4><div id="personAccom"></div></div>
     <div class="summary-block" id="personFlightsBlock"><h4>Flights</h4><div id="personFlights"></div></div>
-    <div class="modal-actions"><button class="btn primary" id="personBtnClose" type="button">Close</button></div>
+    <div class="modal-actions"><span id="personEditTools" style="margin-right:auto; display:flex; gap:8px;"></span><button class="btn primary" id="personBtnClose" type="button">Close</button></div>
   </div>
 </div>
 

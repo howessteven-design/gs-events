@@ -103,8 +103,6 @@
   {
    "id": "r94b405ab",
    "name": "Steven Howes",
-   "role": "Both",
-   "team": "Sales",
    "date": "2026-09-20",
    "activity": "Build-up",
    "start": "08:00",
@@ -114,8 +112,6 @@
   {
    "id": "r1bd34370",
    "name": "Steven Howes",
-   "role": "Both",
-   "team": "Sales",
    "date": "2026-09-21",
    "activity": "Build-up",
    "start": "08:00",
@@ -125,8 +121,6 @@
   {
    "id": "r1ed47569",
    "name": "Steven Howes",
-   "role": "Both",
-   "team": "Sales",
    "date": "2026-09-22",
    "activity": "On Stand",
    "start": "09:30",
@@ -136,8 +130,6 @@
   {
    "id": "r42551c85",
    "name": "Steven Howes",
-   "role": "Both",
-   "team": "Sales",
    "date": "2026-09-23",
    "activity": "On Stand",
    "start": "09:30",
@@ -147,8 +139,6 @@
   {
    "id": "rcf8d1413",
    "name": "Steven Howes",
-   "role": "Both",
-   "team": "Sales",
    "date": "2026-09-24",
    "activity": "On Stand",
    "start": "09:30",
@@ -158,8 +148,6 @@
   {
    "id": "rebbac626",
    "name": "Steven Howes",
-   "role": "Both",
-   "team": "Sales",
    "date": "2026-09-25",
    "activity": "Takedown",
    "start": "08:00",
@@ -169,8 +157,6 @@
   {
    "id": "r7c19c32d",
    "name": "Jamie Davenport",
-   "role": "Both",
-   "team": "Support",
    "date": "2026-09-20",
    "activity": "Build-up",
    "start": "08:00",
@@ -180,8 +166,6 @@
   {
    "id": "rc9296ebb",
    "name": "Jamie Davenport",
-   "role": "Both",
-   "team": "Support",
    "date": "2026-09-21",
    "activity": "Build-up",
    "start": "08:00",
@@ -191,8 +175,6 @@
   {
    "id": "r53c04c46",
    "name": "Jamie Davenport",
-   "role": "Both",
-   "team": "Support",
    "date": "2026-09-22",
    "activity": "On Stand",
    "start": "09:30",
@@ -202,8 +184,6 @@
   {
    "id": "r8a2e7876",
    "name": "Jamie Davenport",
-   "role": "Both",
-   "team": "Support",
    "date": "2026-09-23",
    "activity": "On Stand",
    "start": "09:30",
@@ -213,8 +193,6 @@
   {
    "id": "rb372c8e1",
    "name": "Jamie Davenport",
-   "role": "Both",
-   "team": "Support",
    "date": "2026-09-24",
    "activity": "On Stand",
    "start": "09:30",
@@ -224,8 +202,6 @@
   {
    "id": "ra4da1700",
    "name": "Jamie Davenport",
-   "role": "Both",
-   "team": "Support",
    "date": "2026-09-25",
    "activity": "Off",
    "start": "",
@@ -235,8 +211,6 @@
   {
    "id": "reaf87c80",
    "name": "Kevin Mountstephens",
-   "role": "Build Crew",
-   "team": "N/A",
    "date": "2026-09-20",
    "activity": "Build-up",
    "start": "08:00",
@@ -246,8 +220,6 @@
   {
    "id": "r429ea72a",
    "name": "Kevin Mountstephens",
-   "role": "Build Crew",
-   "team": "N/A",
    "date": "2026-09-21",
    "activity": "Build-up",
    "start": "08:00",
@@ -257,8 +229,6 @@
   {
    "id": "ree4533bd",
    "name": "Kevin Mountstephens",
-   "role": "Build Crew",
-   "team": "N/A",
    "date": "2026-09-22",
    "activity": "Off",
    "start": "",
@@ -268,8 +238,6 @@
   {
    "id": "r8d764ae3",
    "name": "Kevin Mountstephens",
-   "role": "Build Crew",
-   "team": "N/A",
    "date": "2026-09-23",
    "activity": "Off",
    "start": "",
@@ -279,8 +247,6 @@
   {
    "id": "r2c8caaba",
    "name": "Kevin Mountstephens",
-   "role": "Build Crew",
-   "team": "N/A",
    "date": "2026-09-24",
    "activity": "Off",
    "start": "",
@@ -290,8 +256,6 @@
   {
    "id": "rffba8374",
    "name": "Kevin Mountstephens",
-   "role": "Build Crew",
-   "team": "N/A",
    "date": "2026-09-25",
    "activity": "Off",
    "start": "",
@@ -301,8 +265,6 @@
   {
    "id": "rd3289d2e",
    "name": "Jamie Ovenden",
-   "role": "Build Crew",
-   "team": "N/A",
    "date": "2026-09-20",
    "activity": "Build-up",
    "start": "08:00",
@@ -312,8 +274,6 @@
   {
    "id": "r8bba8404",
    "name": "Jamie Ovenden",
-   "role": "Build Crew",
-   "team": "N/A",
    "date": "2026-09-21",
    "activity": "Build-up",
    "start": "08:00",
@@ -323,8 +283,6 @@
   {
    "id": "rbc1de701",
    "name": "Jamie Ovenden",
-   "role": "Build Crew",
-   "team": "N/A",
    "date": "2026-09-22",
    "activity": "Off",
    "start": "",
@@ -334,8 +292,6 @@
   {
    "id": "re669c70b",
    "name": "Jamie Ovenden",
-   "role": "Build Crew",
-   "team": "N/A",
    "date": "2026-09-23",
    "activity": "Off",
    "start": "",
@@ -345,8 +301,6 @@
   {
    "id": "rb37b3d24",
    "name": "Jamie Ovenden",
-   "role": "Build Crew",
-   "team": "N/A",
    "date": "2026-09-24",
    "activity": "Evening networking",
    "start": "18:00",
@@ -356,8 +310,6 @@
   {
    "id": "r59f3fca",
    "name": "Jamie Ovenden",
-   "role": "Build Crew",
-   "team": "N/A",
    "date": "2026-09-25",
    "activity": "Takedown",
    "start": "08:00",
@@ -367,8 +319,6 @@
   {
    "id": "r50c8a102",
    "name": "Dan Reed",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-20",
    "activity": "Off",
    "start": "",
@@ -378,8 +328,6 @@
   {
    "id": "r5b99c697",
    "name": "Dan Reed",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-21",
    "activity": "Evening networking",
    "start": "18:00",
@@ -389,8 +337,6 @@
   {
    "id": "r912834ec",
    "name": "Dan Reed",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-22",
    "activity": "On Stand",
    "start": "09:30",
@@ -400,8 +346,6 @@
   {
    "id": "re8e64f59",
    "name": "Dan Reed",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-23",
    "activity": "On Stand",
    "start": "09:30",
@@ -411,8 +355,6 @@
   {
    "id": "r3fd32098",
    "name": "Dan Reed",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-24",
    "activity": "On Stand",
    "start": "09:30",
@@ -422,8 +364,6 @@
   {
    "id": "r3e24d470",
    "name": "Dan Reed",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-25",
    "activity": "Off",
    "start": "",
@@ -433,8 +373,6 @@
   {
    "id": "rafffb423",
    "name": "Jack Branigan",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-20",
    "activity": "Off",
    "start": "",
@@ -444,8 +382,6 @@
   {
    "id": "rba315238",
    "name": "Jack Branigan",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-21",
    "activity": "Evening networking",
    "start": "18:00",
@@ -455,8 +391,6 @@
   {
    "id": "rebdec6f1",
    "name": "Jack Branigan",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-22",
    "activity": "On Stand",
    "start": "09:30",
@@ -466,8 +400,6 @@
   {
    "id": "rf3a347d4",
    "name": "Jack Branigan",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-23",
    "activity": "On Stand",
    "start": "09:30",
@@ -477,8 +409,6 @@
   {
    "id": "r87fbb483",
    "name": "Jack Branigan",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-24",
    "activity": "On Stand",
    "start": "09:30",
@@ -488,8 +418,6 @@
   {
    "id": "r76f8e4b5",
    "name": "Jack Branigan",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-25",
    "activity": "Takedown",
    "start": "08:00",
@@ -499,8 +427,6 @@
   {
    "id": "rff0e181d",
    "name": "Nathaly Riano-Gomez",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-20",
    "activity": "Off",
    "start": "",
@@ -510,8 +436,6 @@
   {
    "id": "r28865206",
    "name": "Nathaly Riano-Gomez",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-21",
    "activity": "Evening networking",
    "start": "18:00",
@@ -521,8 +445,6 @@
   {
    "id": "rc5a7462a",
    "name": "Nathaly Riano-Gomez",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-22",
    "activity": "On Stand",
    "start": "09:30",
@@ -532,8 +454,6 @@
   {
    "id": "r5a15b2d1",
    "name": "Nathaly Riano-Gomez",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-23",
    "activity": "On Stand",
    "start": "09:30",
@@ -543,8 +463,6 @@
   {
    "id": "r5e066446",
    "name": "Nathaly Riano-Gomez",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-24",
    "activity": "On Stand",
    "start": "09:30",
@@ -554,8 +472,6 @@
   {
    "id": "ra8544b5a",
    "name": "Nathaly Riano-Gomez",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-25",
    "activity": "Off",
    "start": "",
@@ -565,8 +481,6 @@
   {
    "id": "r41cc61c4",
    "name": "Amy Lague",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-20",
    "activity": "Off",
    "start": "",
@@ -576,8 +490,6 @@
   {
    "id": "r3ee2590a",
    "name": "Amy Lague",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-21",
    "activity": "Evening networking",
    "start": "18:00",
@@ -587,8 +499,6 @@
   {
    "id": "rbb68e1d0",
    "name": "Amy Lague",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-22",
    "activity": "On Stand",
    "start": "09:30",
@@ -598,8 +508,6 @@
   {
    "id": "r9c09c704",
    "name": "Amy Lague",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-23",
    "activity": "On Stand",
    "start": "09:30",
@@ -609,8 +517,6 @@
   {
    "id": "r8a0067ea",
    "name": "Amy Lague",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-24",
    "activity": "On Stand",
    "start": "09:30",
@@ -620,8 +526,6 @@
   {
    "id": "r4e25d1e5",
    "name": "Amy Lague",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-25",
    "activity": "Off",
    "start": "",
@@ -631,8 +535,6 @@
   {
    "id": "r18f79b2c",
    "name": "Lucy Barton",
-   "role": "Customer-Facing",
-   "team": "Support",
    "date": "2026-09-20",
    "activity": "Off",
    "start": "",
@@ -642,8 +544,6 @@
   {
    "id": "r4935a72f",
    "name": "Lucy Barton",
-   "role": "Customer-Facing",
-   "team": "Support",
    "date": "2026-09-21",
    "activity": "Evening networking",
    "start": "18:00",
@@ -653,8 +553,6 @@
   {
    "id": "rda10217c",
    "name": "Lucy Barton",
-   "role": "Customer-Facing",
-   "team": "Support",
    "date": "2026-09-22",
    "activity": "On Stand",
    "start": "09:30",
@@ -664,8 +562,6 @@
   {
    "id": "r70e9757b",
    "name": "Lucy Barton",
-   "role": "Customer-Facing",
-   "team": "Support",
    "date": "2026-09-23",
    "activity": "On Stand",
    "start": "09:30",
@@ -675,8 +571,6 @@
   {
    "id": "r87cc4f26",
    "name": "Lucy Barton",
-   "role": "Customer-Facing",
-   "team": "Support",
    "date": "2026-09-24",
    "activity": "On Stand",
    "start": "09:30",
@@ -686,8 +580,6 @@
   {
    "id": "rf654e5a0",
    "name": "Lucy Barton",
-   "role": "Customer-Facing",
-   "team": "Support",
    "date": "2026-09-25",
    "activity": "Off",
    "start": "",
@@ -697,8 +589,6 @@
   {
    "id": "r7f8ae210",
    "name": "Roy Legg-Bagg",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-20",
    "activity": "Off",
    "start": "",
@@ -708,8 +598,6 @@
   {
    "id": "rfd09baf3",
    "name": "Roy Legg-Bagg",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-21",
    "activity": "Evening networking",
    "start": "18:00",
@@ -719,8 +607,6 @@
   {
    "id": "rd763e780",
    "name": "Roy Legg-Bagg",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-22",
    "activity": "On Stand",
    "start": "09:30",
@@ -730,8 +616,6 @@
   {
    "id": "r5ef69791",
    "name": "Roy Legg-Bagg",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-23",
    "activity": "On Stand",
    "start": "09:30",
@@ -741,8 +625,6 @@
   {
    "id": "r67865f16",
    "name": "Roy Legg-Bagg",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-24",
    "activity": "On Stand",
    "start": "09:30",
@@ -752,8 +634,6 @@
   {
    "id": "r79c82754",
    "name": "Roy Legg-Bagg",
-   "role": "Customer-Facing",
-   "team": "Sales",
    "date": "2026-09-25",
    "activity": "Takedown",
    "start": "08:00",
@@ -763,8 +643,6 @@
   {
    "id": "r92eacb66",
    "name": "Joszef Jakub",
-   "role": "Build Crew",
-   "team": "N/A",
    "date": "2026-09-20",
    "activity": "Off",
    "start": "",
@@ -774,8 +652,6 @@
   {
    "id": "r6930e71",
    "name": "Joszef Jakub",
-   "role": "Build Crew",
-   "team": "N/A",
    "date": "2026-09-21",
    "activity": "Off",
    "start": "",
@@ -785,8 +661,6 @@
   {
    "id": "r6e68dfaf",
    "name": "Joszef Jakub",
-   "role": "Build Crew",
-   "team": "N/A",
    "date": "2026-09-22",
    "activity": "Off",
    "start": "",
@@ -796,8 +670,6 @@
   {
    "id": "rf00c1b4d",
    "name": "Joszef Jakub",
-   "role": "Build Crew",
-   "team": "N/A",
    "date": "2026-09-23",
    "activity": "Off",
    "start": "",
@@ -807,8 +679,6 @@
   {
    "id": "r69355db4",
    "name": "Joszef Jakub",
-   "role": "Build Crew",
-   "team": "N/A",
    "date": "2026-09-24",
    "activity": "Evening networking",
    "start": "18:00",
@@ -818,8 +688,6 @@
   {
    "id": "r9b295120",
    "name": "Joszef Jakub",
-   "role": "Build Crew",
-   "team": "N/A",
    "date": "2026-09-25",
    "activity": "Takedown",
    "start": "08:00",
@@ -1215,6 +1083,87 @@
    "label": "Shipping / freight tracking",
    "url": "",
    "notes": "Link to the pallet shipment tracking, if available"
+  }
+ ],
+ "people": [
+  {
+   "id": "p0",
+   "name": "Amy Lague",
+   "types": [
+    "Sales"
+   ]
+  },
+  {
+   "id": "p1",
+   "name": "Dan Reed",
+   "types": [
+    "Sales"
+   ]
+  },
+  {
+   "id": "p2",
+   "name": "Jack Branigan",
+   "types": [
+    "Sales"
+   ]
+  },
+  {
+   "id": "p3",
+   "name": "Jamie Davenport",
+   "types": [
+    "Support",
+    "Build"
+   ]
+  },
+  {
+   "id": "p4",
+   "name": "Jamie Ovenden",
+   "types": [
+    "Build"
+   ]
+  },
+  {
+   "id": "p5",
+   "name": "Joszef Jakub",
+   "types": [
+    "Build"
+   ]
+  },
+  {
+   "id": "p6",
+   "name": "Kevin Mountstephens",
+   "types": [
+    "Build"
+   ]
+  },
+  {
+   "id": "p7",
+   "name": "Lucy Barton",
+   "types": [
+    "Support"
+   ]
+  },
+  {
+   "id": "p8",
+   "name": "Nathaly Riano-Gomez",
+   "types": [
+    "Sales"
+   ]
+  },
+  {
+   "id": "p9",
+   "name": "Roy Legg-Bagg",
+   "types": [
+    "Sales"
+   ]
+  },
+  {
+   "id": "p10",
+   "name": "Steven Howes",
+   "types": [
+    "Sales",
+    "Build"
+   ]
   }
  ]
 });
