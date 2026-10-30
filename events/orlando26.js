@@ -127,7 +127,73 @@
    "html": "<div class=\"kv\"><div class=\"kv-row\"><div class=\"kv-k\">Exhibitor assistance</div><div class=\"kv-v\"><a href=\"mailto:Exhibitors@IAAPA.org\">Exhibitors@IAAPA.org</a></div></div><div class=\"kv-row\"><div class=\"kv-k\">Registration support</div><div class=\"kv-v\"><a href=\"mailto:IAAPAExpo@jade.mcievents.com\">IAAPAExpo@jade.mcievents.com</a></div></div><div class=\"kv-row\"><div class=\"kv-k\">Exhibit sales</div><div class=\"kv-v\"><a href=\"mailto:ExhibitSales@IAAPA.org\">ExhibitSales@IAAPA.org</a></div></div><div class=\"kv-row\"><div class=\"kv-k\">Connect+ (profile and app)</div><div class=\"kv-v\"><a href=\"mailto:ConnectPlus@IAAPA.org\">ConnectPlus@IAAPA.org</a></div></div><div class=\"kv-row\"><div class=\"kv-k\">Press and media</div><div class=\"kv-v\"><a href=\"mailto:PressOffice@IAAPA.org\">PressOffice@IAAPA.org</a></div></div><div class=\"kv-row\"><div class=\"kv-k\">IAAPA headquarters</div><div class=\"kv-v\">4155 West Taft Vineland Road, Orlando, FL 32837 &middot; +1 (321) 319-7600</div></div></div>"
   }
  ],
- "shifts": [],
+ "shifts": [
+  {
+   "id": "sh10",
+   "name": "Steven Howes",
+   "date": "2026-11-10",
+   "activity": "Travel",
+   "start": "14:30",
+   "end": "19:10"
+  },
+  {
+   "id": "sh11",
+   "name": "Steven Howes",
+   "date": "2026-11-11",
+   "activity": "CSI",
+   "start": "08:00",
+   "end": "18:30"
+  },
+  {
+   "id": "sh13",
+   "name": "Steven Howes",
+   "date": "2026-11-13",
+   "activity": "Build-up"
+  },
+  {
+   "id": "sh14",
+   "name": "Steven Howes",
+   "date": "2026-11-14",
+   "activity": "Build-up"
+  },
+  {
+   "id": "sh15",
+   "name": "Steven Howes",
+   "date": "2026-11-15",
+   "activity": "Build-up"
+  },
+  {
+   "id": "sh17",
+   "name": "Steven Howes",
+   "date": "2026-11-17",
+   "activity": "On Stand",
+   "start": "13:45"
+  },
+  {
+   "id": "sh18",
+   "name": "Steven Howes",
+   "date": "2026-11-18",
+   "activity": "On Stand"
+  },
+  {
+   "id": "sh19",
+   "name": "Steven Howes",
+   "date": "2026-11-19",
+   "activity": "On Stand"
+  },
+  {
+   "id": "sh20",
+   "name": "Steven Howes",
+   "date": "2026-11-20",
+   "activity": "On Stand"
+  },
+  {
+   "id": "sh21",
+   "name": "Steven Howes",
+   "date": "2026-11-21",
+   "activity": "Travel"
+  }
+ ],
  "flights": [
   {
    "id": "fl8",
@@ -142,7 +208,7 @@
    "departTime": "14:30",
    "arriveDate": "2026-11-10",
    "arriveTime": "19:10",
-   "notes": "Premium Economy. Heathrow T3 to Orlando Terminal C.",
+   "notes": "Heathrow T3 to Orlando Terminal C.",
    "ref": "D979NE"
   },
   {
@@ -238,7 +304,7 @@
    "departTime": "15:20",
    "arriveDate": "2026-11-14",
    "arriveTime": "17:40",
-   "notes": "Economy, carry-on only. Ticketed as Maxwel Huber.",
+   "notes": "Carry-on only. Ticketed as Maxwel Huber.",
    "ref": "YTGH8M"
   },
   {
@@ -254,7 +320,7 @@
    "departTime": "15:45",
    "arriveDate": "2026-11-21",
    "arriveTime": "18:15",
-   "notes": "Economy, carry-on only. Ticketed as Maxwel Huber.",
+   "notes": "Carry-on only. Ticketed as Maxwel Huber.",
    "ref": "YTGH8M"
   },
   {
@@ -270,7 +336,7 @@
    "departTime": "13:45",
    "arriveDate": "2026-11-21",
    "arriveTime": "15:25",
-   "notes": "Premium Economy, seat 17A. Operated by Delta. Orlando Terminal B to Atlanta Terminal S. Connects to VS104.",
+   "notes": "Seat 17A. Operated by Delta. Orlando Terminal B to Atlanta Terminal S. Connects to VS104.",
    "ref": "D979NE"
   },
   {
@@ -286,7 +352,7 @@
    "departTime": "17:30",
    "arriveDate": "2026-11-22",
    "arriveTime": "06:25",
-   "notes": "Premium Economy, seat 25A. Atlanta Terminal I to Heathrow T3. Arrives next day.",
+   "notes": "Seat 25A. Atlanta Terminal I to Heathrow T3. Arrives next day.",
    "ref": "D979NE"
   },
   {
@@ -303,7 +369,7 @@
    "arriveDate": "2026-11-18",
    "arriveTime": "09:35",
    "ref": "YVXXRR",
-   "notes": "Economy, carry-on only. Ticketed as Cory Barrick."
+   "notes": "Carry-on only. Ticketed as Cory Barrick."
   },
   {
    "id": "fl12",
@@ -319,7 +385,7 @@
    "arriveDate": "2026-11-19",
    "arriveTime": "22:00",
    "ref": "YVXXRR",
-   "notes": "Economy, carry-on only. Ticketed as Cory Barrick."
+   "notes": "Carry-on only. Ticketed as Cory Barrick."
   },
   {
    "id": "fl13",
@@ -333,7 +399,8 @@
    "departDate": "2026-11-18",
    "departTime": "07:10",
    "arriveDate": "2026-11-18",
-   "arriveTime": "09:35"
+   "arriveTime": "09:35",
+   "notes": ""
   },
   {
    "id": "fl14",
@@ -347,7 +414,8 @@
    "departDate": "2026-11-19",
    "departTime": "19:35",
    "arriveDate": "2026-11-19",
-   "arriveTime": "22:00"
+   "arriveTime": "22:00",
+   "notes": ""
   },
   {
    "id": "fl19",
@@ -460,6 +528,38 @@
    "arriveTime": "16:55",
    "ref": "YECSRC",
    "notes": "Madrid T4S to Orlando Terminal C. Ticketed as Nathaly Rianogomez."
+  },
+  {
+   "id": "fl_rodo",
+   "name": "Rod Morton",
+   "direction": "Outbound",
+   "status": "Booked",
+   "departDate": "2026-11-15",
+   "notes": "Flight details to follow."
+  },
+  {
+   "id": "fl_rodr",
+   "name": "Rod Morton",
+   "direction": "Return",
+   "status": "Booked",
+   "departDate": "2026-11-19",
+   "notes": "Flight details to follow."
+  },
+  {
+   "id": "fl_guyo",
+   "name": "Guy Morton",
+   "direction": "Outbound",
+   "status": "Booked",
+   "departDate": "2026-11-15",
+   "notes": "Flight details to follow."
+  },
+  {
+   "id": "fl_guyr",
+   "name": "Guy Morton",
+   "direction": "Return",
+   "status": "Booked",
+   "departDate": "2026-11-19",
+   "notes": "Flight details to follow."
   }
  ],
  "accom": [
@@ -572,6 +672,24 @@
    "checkout": "2026-11-19",
    "ref": "1082427235",
    "notes": "Prepaid, room only, 1-bedroom suite (king, courtyard view). Mandatory resort fee not included - payable at the hotel. Hotel tel +1 407 352 2400."
+  },
+  {
+   "id": "ac_rod",
+   "name": "Rod Morton",
+   "type": "Hotel Booked",
+   "hotel": "Marriott Hotel",
+   "checkin": "2026-11-15",
+   "checkout": "2026-11-19",
+   "notes": "Hotel details to follow."
+  },
+  {
+   "id": "ac_guy",
+   "name": "Guy Morton",
+   "type": "Hotel Booked",
+   "hotel": "Marriott Hotel",
+   "checkin": "2026-11-15",
+   "checkout": "2026-11-19",
+   "notes": "Hotel details to follow."
   }
  ],
  "actions": [],
@@ -581,57 +699,103 @@
   {
    "id": "psteve",
    "name": "Steven Howes",
-   "types": []
+   "types": [
+    "Support",
+    "Build"
+   ]
   },
   {
    "id": "pamy",
    "name": "Amy Lague",
-   "types": []
+   "types": [
+    "Sales"
+   ]
   },
   {
    "id": "pdan",
    "name": "Dan Reed",
-   "types": []
+   "types": [
+    "Sales"
+   ]
   },
   {
    "id": "pmax",
    "name": "Max Huber",
-   "types": []
+   "types": [
+    "Sales",
+    "Build"
+   ]
   },
   {
    "id": "pcharlie",
    "name": "Charlie Edwards",
-   "types": []
+   "types": [
+    "Visitor"
+   ]
   },
   {
    "id": "pcorey",
    "name": "Corey Barrick",
-   "types": []
+   "types": [
+    "Visitor"
+   ]
   },
   {
    "id": "palex",
    "name": "Alex Hall",
-   "types": []
+   "types": [
+    "Visitor"
+   ]
   },
   {
    "id": "pjamie",
    "name": "Jamie Davenport",
-   "types": []
+   "types": [
+    "Support",
+    "Build"
+   ]
   },
   {
    "id": "pjozsef",
    "name": "Jozsef Jakub",
-   "types": []
+   "types": [
+    "Build"
+   ]
   },
   {
    "id": "pnathalyria",
    "name": "Nathaly Riano-Gomez",
-   "types": []
+   "types": [
+    "Sales"
+   ]
   },
   {
    "id": "pjayfisher",
    "name": "Jay Fisher",
-   "types": []
+   "types": [
+    "Visitor"
+   ]
+  },
+  {
+   "id": "pbrooktuffi",
+   "name": "Brook Tuffin",
+   "types": [
+    "Sales"
+   ]
+  },
+  {
+   "id": "prodmorton",
+   "name": "Rod Morton",
+   "types": [
+    "Sales"
+   ]
+  },
+  {
+   "id": "pguymorton",
+   "name": "Guy Morton",
+   "types": [
+    "Visitor"
+   ]
   }
  ]
 });

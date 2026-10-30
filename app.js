@@ -85,6 +85,15 @@ function personTypes(name){
   const arr = p ? (p.types||[]) : legacyTypes(name);
   return TYPES.filter(t=>arr.includes(t));
 }
+/* Are this person's flights booked? Worked out from the Flights tab. */
+function flightStatus(name){
+  const legs = flights.filter(f=>f.name===name);
+  if (!legs.length) return { label:'No flights listed', cls:'off' };
+  if (legs.some(f=>f.status==='TBC')) return { label:'Flights TBC', cls:'custfacing' };
+  const out = legs.some(f=>f.direction==='Outbound'), ret = legs.some(f=>f.direction==='Return');
+  if (out && ret) return { label:'Flights booked', cls:'build' };
+  return { label: out ? 'Outbound only' : ret ? 'Return only' : 'Flights booked', cls:'custfacing' };
+}
 function typeBadges(name, grey){
   const t = personTypes(name);
   if (!t.length) return EDIT ? '<span class="badge off">Set type</span>' : '&ndash;';
@@ -336,6 +345,7 @@ function renderPeople(){
   const ex = EVENT.expenses;
   grid.innerHTML = names.map(name=>{
     const types = personTypes(name);
+    const fs = flightStatus(name);
     const days = daysOnSite(name);
     const accEntry = accom.find(a=>a.name===name);
     const accLabel = accEntry ? (ACC_LABEL[accEntry.type] || accEntry.type) : 'Not entered';
@@ -347,7 +357,7 @@ function renderPeople(){
         <div class="ptags">
           ${typeBadges(name)}
         </div>
-        <div class="pmeta"><span><b style="color:var(--ink);">${days}</b> day${days===1?'':'s'} on site${ex ? ` &middot; ${ex.symbol}${days*ex.perDay} allowance` : ''}</span><span class="badge ${accClass}" style="font-size:11px;">${escapeHtml(accLabel)}</span></div>
+        <div class="pmeta"><span><b style="color:var(--ink);">${days}</b> day${days===1?'':'s'} on site${ex ? ` &middot; ${ex.symbol}${days*ex.perDay} allowance` : ''}</span><span style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge ${accClass}" style="font-size:11px;">${escapeHtml(accLabel)}</span><span class="badge ${fs.cls}" style="font-size:11px;">${fs.label}</span></span></div>
       </button>`;
   }).join('');
   bindPeople(grid);
@@ -355,7 +365,7 @@ function renderPeople(){
 
 function openPersonModal(name){
   $('personModalTitle').textContent = name;
-  $('personTags').innerHTML = personTypes(name).map(t=>`<span class="badge ${TYPE_CLASS[t]}">${t}</span>`).join('') || '<span class="empty-note">No staff type set</span>';
+  $('personTags').innerHTML = (personTypes(name).map(t=>`<span class="badge ${TYPE_CLASS[t]}">${t}</span>`).join('') || '<span class="empty-note">No staff type set</span>') + (() => { const f = flightStatus(name); return ` <span class="badge ${f.cls}">${f.label}</span>`; })();
   const mine = shifts.filter(s=>s.name===name).sort((a,b)=>a.date.localeCompare(b.date));
   $('personSchedule').innerHTML = !mine.length ? `<div class="empty-note">No shifts recorded yet.</div>` : mine.map(s=>`
     <div class="schedule-row">
@@ -498,8 +508,8 @@ function exportExcel(){
     [3,4].forEach(c=>{ const cell = aws[XLSX.utils.encode_cell({r, c})]; if (cell) cell.z = 'dd-mmm-yyyy'; });
   }
   const names = getAllNames();
-  const pws = XLSX.utils.aoa_to_sheet([['Name','Staff Type'], ...names.map(n=>[n, personTypes(n).join(', ')])]);
-  pws['!cols'] = [{wch:24},{wch:28}];
+  const pws = XLSX.utils.aoa_to_sheet([['Name','Staff Type','Flights'], ...names.map(n=>[n, personTypes(n).join(', '), flightStatus(n).label])]);
+  pws['!cols'] = [{wch:24},{wch:28},{wch:18}];
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, pws, 'People');
   XLSX.utils.book_append_sheet(wb, ws, 'Staff Movements');
