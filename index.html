@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Greenspan Events HQ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0F152F">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="masthead">
+  <svg class="hero-art" viewBox="0 0 1200 320" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+<defs>
+<linearGradient id="gA" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#19E3D0" stop-opacity="0"/><stop offset=".35" stop-color="#19E3D0" stop-opacity=".85"/><stop offset=".7" stop-color="#4C6FFF"/><stop offset="1" stop-color="#7E5CE9"/></linearGradient>
+<linearGradient id="gB" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#7E5CE9" stop-opacity="0"/><stop offset=".45" stop-color="#7E5CE9" stop-opacity=".8"/><stop offset=".8" stop-color="#EE5478"/><stop offset="1" stop-color="#FF8A6B"/></linearGradient>
+<filter id="glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="9"/></filter>
+</defs>
+<g fill="none" stroke="url(#gA)" stroke-width="5" opacity=".35" filter="url(#glow)"><path d="M359.0,295.0 C605.0,306.0 862.5,124.5 1169.5,-51.5" />
+<path d="M361.8,299.7 C609.7,307.9 864.8,130.6 1170.9,-47.3" />
+<path d="M364.6,304.3 C614.3,309.7 867.2,136.6 1172.3,-43.1" />
+<path d="M367.4,309.0 C619.0,311.6 869.5,142.7 1173.7,-38.9" />
+<path d="M370.2,313.7 C623.7,313.5 871.8,148.8 1175.1,-34.7" />
+<path d="M373.0,318.3 C628.3,315.3 874.2,154.8 1176.5,-30.5" />
+<path d="M375.8,323.0 C633.0,317.2 876.5,160.9 1177.9,-26.3" />
+<path d="M378.6,327.7 C637.7,319.1 878.8,167.0 1179.3,-22.1" />
+<path d="M381.4,332.3 C642.3,320.9 881.2,173.0 1180.7,-17.9" />
+<path d="M384.2,337.0 C647.0,322.8 883.5,179.1 1182.1,-13.7" />
+<path d="M387.0,341.7 C651.7,324.7 885.8,185.2 1183.5,-9.5" />
+<path d="M389.8,346.3 C656.3,326.5 888.2,191.2 1184.9,-5.3" />
+<path d="M392.6,351.0 C661.0,328.4 890.5,197.3 1186.3,-1.1" />
+<path d="M395.4,355.7 C665.7,330.3 892.8,203.4 1187.7,3.1" />
+<path d="M398.2,360.3 C670.3,332.1 895.2,209.4 1189.1,7.3" />
+<path d="M401.0,365.0 C675.0,334.0 897.5,215.5 1190.5,11.5" /></g>
+<g fill="none" stroke="url(#gA)" stroke-width="1" opacity=".75"><path d="M359.0,295.0 C605.0,306.0 862.5,124.5 1169.5,-51.5" />
+<path d="M361.8,299.7 C609.7,307.9 864.8,130.6 1170.9,-47.3" />
+<path d="M364.6,304.3 C614.3,309.7 867.2,136.6 1172.3,-43.1" />
+<path d="M367.4,309.0 C619.0,311.6 869.5,142.7 1173.7,-38.9" />
+<path d="M370.2,313.7 C623.7,313.5 871.8,148.8 1175.1,-34.7" />
+<path d="M373.0,318.3 C628.3,315.3 874.2,154.8 1176.5,-30.5" />
+<path d="M375.8,323.0 C633.0,317.2 876.5,160.9 1177.9,-26.3" />
+<path d="M378.6,327.7 C637.7,319.1 878.8,167.0 1179.3,-22.1" />
+<path d="M381.4,332.3 C642.3,320.9 881.2,173.0 1180.7,-17.9" />
+<path d="M384.2,337.0 C647.0,322.8 883.5,179.1 1182.1,-13.7" />
+<path d="M387.0,341.7 C651.7,324.7 885.8,185.2 1183.5,-9.5" />
+<path d="M389.8,346.3 C656.3,326.5 888.2,191.2 1184.9,-5.3" />
+<path d="M392.6,351.0 C661.0,328.4 890.5,197.3 1186.3,-1.1" />
+<path d="M395.4,355.7 C665.7,330.3 892.8,203.4 1187.7,3.1" />
+<path d="M398.2,360.3 C670.3,332.1 895.2,209.4 1189.1,7.3" />
+<path d="M401.0,365.0 C675.0,334.0 897.5,215.5 1190.5,11.5" /></g>
+<g fill="none" stroke="url(#gB)" stroke-width="5" opacity=".3" filter="url(#glow)"><path d="M496.0,290.0 C740.0,304.0 900.0,228.0 1208.0,54.0" />
+<path d="M499.7,296.2 C746.2,306.5 903.1,236.0 1209.8,59.5" />
+<path d="M503.4,302.3 C752.3,308.9 906.2,244.0 1211.7,65.1" />
+<path d="M507.1,308.5 C758.5,311.4 909.2,252.0 1213.5,70.6" />
+<path d="M510.8,314.6 C764.6,313.8 912.3,260.0 1215.4,76.2" />
+<path d="M514.5,320.8 C770.8,316.3 915.4,268.0 1217.2,81.7" />
+<path d="M518.2,326.9 C776.9,318.8 918.5,276.0 1219.1,87.2" />
+<path d="M521.8,333.1 C783.1,321.2 921.5,284.0 1220.9,92.8" />
+<path d="M525.5,339.2 C789.2,323.7 924.6,292.0 1222.8,98.3" />
+<path d="M529.2,345.4 C795.4,326.2 927.7,300.0 1224.6,103.8" />
+<path d="M532.9,351.5 C801.5,328.6 930.8,308.0 1226.5,109.4" />
+<path d="M536.6,357.7 C807.7,331.1 933.8,316.0 1228.3,114.9" />
+<path d="M540.3,363.8 C813.8,333.5 936.9,324.0 1230.2,120.5" />
+<path d="M544.0,370.0 C820.0,336.0 940.0,332.0 1232.0,126.0" /></g>
+<g fill="none" stroke="url(#gB)" stroke-width="1" opacity=".7"><path d="M496.0,290.0 C740.0,304.0 900.0,228.0 1208.0,54.0" />
+<path d="M499.7,296.2 C746.2,306.5 903.1,236.0 1209.8,59.5" />
+<path d="M503.4,302.3 C752.3,308.9 906.2,244.0 1211.7,65.1" />
+<path d="M507.1,308.5 C758.5,311.4 909.2,252.0 1213.5,70.6" />
+<path d="M510.8,314.6 C764.6,313.8 912.3,260.0 1215.4,76.2" />
+<path d="M514.5,320.8 C770.8,316.3 915.4,268.0 1217.2,81.7" />
+<path d="M518.2,326.9 C776.9,318.8 918.5,276.0 1219.1,87.2" />
+<path d="M521.8,333.1 C783.1,321.2 921.5,284.0 1220.9,92.8" />
+<path d="M525.5,339.2 C789.2,323.7 924.6,292.0 1222.8,98.3" />
+<path d="M529.2,345.4 C795.4,326.2 927.7,300.0 1224.6,103.8" />
+<path d="M532.9,351.5 C801.5,328.6 930.8,308.0 1226.5,109.4" />
+<path d="M536.6,357.7 C807.7,331.1 933.8,316.0 1228.3,114.9" />
+<path d="M540.3,363.8 C813.8,333.5 936.9,324.0 1230.2,120.5" />
+<path d="M544.0,370.0 C820.0,336.0 940.0,332.0 1232.0,126.0" /></g>
+</svg>
+  <div class="wrap">
+    <div class="masthead-top">
+      <img src="assets/logo.png" alt="Greenspan XP Experiential Projects" class="masthead-logo">
+      <div class="masthead-tools">
+        <div class="event-picker">
+          <label for="eventSelect">Event</label>
+          <select id="eventSelect" aria-label="Select event"></select>
+        </div>
+        <button class="theme-btn" id="btnTheme" type="button" aria-label="Toggle light / dark theme">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18" /><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
+          Theme
+        </button>
+      </div>
+    </div>
+    <div class="masthead-main">
+      <div>
+        <p class="eyebrow" id="eventEyebrow"></p>
+        <h1 class="event-title" id="eventTitle"></h1>
+        <p class="event-sub" id="eventSub"></p>
+      </div>
+      <a class="stand-badge" id="standBadge" href="#" target="_blank" rel="noopener" style="display:none;">
+        <span class="stand-label">Our stand</span> <span id="standNum"></span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div id="draftBanner"></div>
+
+  <div class="navrow">
+    <div class="tabs" id="tabs" role="tablist"></div>
+    <div class="toolbar">
+      <button class="btn" id="btnExport" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21V9m0 12l-4-4m4 4l4-4M4 5h16"/></svg>
+        Export to Excel
+      </button>
+      <button class="btn" id="btnPrint" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="9" width="12" height="7" rx="1"/><path d="M6 9V4h12v5M6 16v4h12v-4"/></svg>
+        Print / PDF
+      </button>
+    </div>
+  </div>
+
+  <div id="rotaView">
+    <div class="daystrip" id="daystrip"></div>
+    <div class="summary-row" id="summaryRow"></div>
+    <div id="accessNotice"></div>
+    <div class="legend">
+      <span><span class="swatch" style="background:var(--build)"></span>Build crew</span>
+      <span><span class="swatch" style="background:var(--sales)"></span>Sales</span>
+      <span><span class="swatch" style="background:var(--support)"></span>Support</span>
+      <span><span class="swatch" style="background:var(--both)"></span>Both (role)</span>
+      <span><span class="swatch" style="background:var(--off)"></span>Off</span>
+    </div>
+    <section class="panel">
+      <div class="panel-head">
+        <h2 id="tableTitle">All staff movements</h2>
+        <span id="tableCount" class="panel-count"></span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table id="rotaTable">
+          <thead>
+            <tr>
+              <th>Staff name</th><th>Role type</th><th>Team</th><th>Date</th><th>Activity</th>
+              <th>Time</th><th>Location / notes</th>
+            </tr>
+          </thead>
+          <tbody id="rotaBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <div id="accomView" style="display:none;">
+    <div class="summary-row" id="accomSummaryRow"></div>
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Accommodation</h2>
+        <span id="accomCount" class="panel-count"></span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table id="accomTable">
+          <thead>
+            <tr>
+              <th>Staff name</th><th>Type</th><th>Hotel / address</th><th>Check-in</th>
+              <th>Check-out</th><th>Nights</th><th>Booking ref</th><th>Notes</th>
+            </tr>
+          </thead>
+          <tbody id="accomBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <div id="peopleView" style="display:none;">
+    <div id="peopleNotice"></div>
+    <div class="people-grid" id="peopleGrid"></div>
+  </div>
+
+  <div id="infoView" style="display:none;">
+    <div id="infoSections"></div>
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Key links</h2>
+        <span id="linksCount" class="panel-count"></span>
+      </div>
+      <div class="info-pad">
+        <div class="link-grid" id="linkGrid"></div>
+      </div>
+    </section>
+  </div>
+
+  <div id="mktView" style="display:none;">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>MKT Only - actions</h2>
+        <span id="actionsCount" class="panel-count"></span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table id="actionsTable">
+          <thead><tr><th>Category</th><th>Task</th><th>Status</th><th>Notes</th></tr></thead>
+          <tbody id="actionsBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel" id="expensesPanel">
+      <div class="panel-head">
+        <h2>Expenses - daily allowance</h2>
+        <span id="expensesCount" class="panel-count"></span>
+      </div>
+      <p id="expensesIntro" style="padding:0 22px; margin:16px 0 0; font-size:13.5px; color:var(--ink-soft);"></p>
+      <div id="expensesNote"></div>
+      <div style="overflow-x:auto; margin-top:14px;">
+        <table id="expensesTable">
+          <thead><tr><th>Name</th><th>Days</th><th>Amount owed</th></tr></thead>
+          <tbody id="expensesBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="personModalBackdrop">
+  <div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="personModalTitle">
+    <h3 id="personModalTitle"></h3>
+    <div class="ptags" id="personTags" style="margin-bottom:20px;"></div>
+    <div class="summary-block"><h4>Schedule</h4><div id="personSchedule"></div></div>
+    <div class="summary-block"><h4>Accommodation</h4><div id="personAccom"></div></div>
+    <div class="modal-actions"><button class="btn primary" id="personBtnClose" type="button">Close</button></div>
+  </div>
+</div>
+
+<!-- Event data: one file per event. Add a new event = add a file in /events and one line here. -->
+<script src="events/london26.js"></script>
+<script src="events/orlando26.js"></script>
+
+<script src="app.js"></script>
+</body>
+</html>
