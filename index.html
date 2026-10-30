@@ -110,17 +110,18 @@
 
 <div class="wrap">
   <div id="draftBanner"></div>
+  <div id="editBar"></div>
 
   <div class="navrow">
     <div class="tabs" id="tabs" role="tablist"></div>
     <div class="toolbar">
       <button class="btn" id="btnExport" type="button">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21V9m0 12l-4-4m4 4l4-4M4 5h16"/></svg>
-        Export to Excel
+        Excel
       </button>
       <button class="btn" id="btnPrint" type="button">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="9" width="12" height="7" rx="1"/><path d="M6 9V4h12v5M6 16v4h12v-4"/></svg>
-        Print / PDF
+        Print
       </button>
     </div>
   </div>
@@ -139,10 +140,10 @@
     <section class="panel">
       <div class="panel-head">
         <h2 id="tableTitle">All staff movements</h2>
-        <span id="tableCount" class="panel-count"></span>
+        <span class="panel-tools"><span id="tableCount" class="panel-count"></span><span class="panel-add" data-add="shifts" data-label="Add shift"></span></span>
       </div>
       <div style="overflow-x:auto;">
-        <table id="rotaTable">
+        <table id="rotaTable" data-editable>
           <thead>
             <tr>
               <th>Staff name</th><th>Role type</th><th>Team</th><th>Date</th><th>Activity</th>
@@ -160,10 +161,10 @@
     <section class="panel">
       <div class="panel-head">
         <h2>Accommodation</h2>
-        <span id="accomCount" class="panel-count"></span>
+        <span class="panel-tools"><span id="accomCount" class="panel-count"></span><span class="panel-add" data-add="accom" data-label="Add accommodation"></span></span>
       </div>
       <div style="overflow-x:auto;">
-        <table id="accomTable">
+        <table id="accomTable" data-editable>
           <thead>
             <tr>
               <th>Staff name</th><th>Type</th><th>Hotel / address</th><th>Check-in</th>
@@ -171,6 +172,27 @@
             </tr>
           </thead>
           <tbody id="accomBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <div id="flightsView" style="display:none;">
+    <div class="summary-row" id="flightsSummaryRow"></div>
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Flights</h2>
+        <span class="panel-tools"><span id="flightsCount" class="panel-count"></span><span class="panel-add" data-add="flights" data-label="Add flight"></span></span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table id="flightsTable" data-editable>
+          <thead>
+            <tr>
+              <th>Staff name</th><th>Direction</th><th>Flight</th><th>Route</th>
+              <th>Departs</th><th>Arrives</th><th>Booking ref</th><th>Notes</th>
+            </tr>
+          </thead>
+          <tbody id="flightsBody"></tbody>
         </table>
       </div>
     </section>
@@ -186,7 +208,7 @@
     <section class="panel">
       <div class="panel-head">
         <h2>Key links</h2>
-        <span id="linksCount" class="panel-count"></span>
+        <span class="panel-tools"><span id="linksCount" class="panel-count"></span><span class="panel-add" data-add="links" data-label="Add link"></span></span>
       </div>
       <div class="info-pad">
         <div class="link-grid" id="linkGrid"></div>
@@ -198,10 +220,10 @@
     <section class="panel">
       <div class="panel-head">
         <h2>MKT Only - actions</h2>
-        <span id="actionsCount" class="panel-count"></span>
+        <span class="panel-tools"><span id="actionsCount" class="panel-count"></span><span class="panel-add" data-add="actions" data-label="Add action"></span></span>
       </div>
       <div style="overflow-x:auto;">
-        <table id="actionsTable">
+        <table id="actionsTable" data-editable>
           <thead><tr><th>Category</th><th>Task</th><th>Status</th><th>Notes</th></tr></thead>
           <tbody id="actionsBody"></tbody>
         </table>
@@ -231,6 +253,7 @@
     <div class="ptags" id="personTags" style="margin-bottom:20px;"></div>
     <div class="summary-block"><h4>Schedule</h4><div id="personSchedule"></div></div>
     <div class="summary-block"><h4>Accommodation</h4><div id="personAccom"></div></div>
+    <div class="summary-block" id="personFlightsBlock"><h4>Flights</h4><div id="personFlights"></div></div>
     <div class="modal-actions"><button class="btn primary" id="personBtnClose" type="button">Close</button></div>
   </div>
 </div>
@@ -240,5 +263,6 @@
 <script src="events/orlando26.js"></script>
 
 <script src="app.js"></script>
+<script src="edit.js"></script>
 </body>
 </html>

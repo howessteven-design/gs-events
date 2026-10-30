@@ -4,18 +4,68 @@
  "label": "IAAPA Expo 2026 – Orlando",
  "title": "IAAPA Orlando HQ",
  "default": true,
- "draftNote": "<b>Draft</b> &ndash; Orlando details are still being added. Official show dates are 16&ndash;20 Nov 2026 at the Orange County Convention Center; build-up, show hours, takedown, stand number and team are to be confirmed.",
- "subtitle": "IAAPA Expo 2026, Orange County Convention Center, Orlando &middot; 16&ndash;20 Nov 2026 &middot; Build-up, show hours and takedown to be confirmed",
- "standNumber": "",
- "standUrl": "",
+ "draftNote": "<b>Draft</b> &ndash; Orlando details are still being added. Greenspan is on stand <b>S5186</b> (30&prime; &times; 40&prime;, Yellow freight target). Show dates and hours are from the IAAPA Exhibitor Welcome Guide (updated 24 Jun 2026); team, flights and hotel are to be confirmed.",
+ "subtitle": "IAAPA Expo 2026, Orange County Convention Center (South Building), Orlando &middot; Move-in Thu 12 &ndash; Mon 16 Nov &middot; Show Tue 17 &ndash; Thu 19, 10am&ndash;6pm, Fri 20, 10am&ndash;4pm (exhibitors on the floor from 7:30am) &middot; Move-out from Fri 20 Nov, 4pm",
+ "standNumber": "S5186",
+ "standUrl": "https://iaapaexpo26.mapyourshow.com/8_0/exhibitor/exhibitor-details.cfm?exhid=7897",
  "tabs": [
   "rota",
   "accom",
+  "flights",
   "people",
   "info",
   "mkt"
  ],
- "days": [],
+ "days": [
+  {
+   "date": "2026-11-12",
+   "phase": "Targeted move-in"
+  },
+  {
+   "date": "2026-11-13",
+   "phase": "Targeted move-in"
+  },
+  {
+   "date": "2026-11-14",
+   "phase": "General move-in"
+  },
+  {
+   "date": "2026-11-15",
+   "phase": "General move-in"
+  },
+  {
+   "date": "2026-11-16",
+   "phase": "General move-in"
+  },
+  {
+   "date": "2026-11-17",
+   "phase": "Show"
+  },
+  {
+   "date": "2026-11-18",
+   "phase": "Show"
+  },
+  {
+   "date": "2026-11-19",
+   "phase": "Show"
+  },
+  {
+   "date": "2026-11-20",
+   "phase": "Show / Move-out"
+  },
+  {
+   "date": "2026-11-21",
+   "phase": "Move-out"
+  },
+  {
+   "date": "2026-11-22",
+   "phase": "Move-out"
+  },
+  {
+   "date": "2026-11-23",
+   "phase": "Move-out"
+  }
+ ],
  "expenses": null,
  "info": [
   {
@@ -24,17 +74,63 @@
    "heading": "Orange County Convention Center",
    "tagline": "Orange County Convention Center (OCCC)",
    "address": "9800 International Drive, Orlando, FL 32819",
-   "mapQuery": "Orange County Convention Center, 9800 International Drive, Orlando, FL 32819"
+   "mapQuery": "Orange County Convention Center, 9800 International Drive, Orlando, FL 32819",
+   "extra": "IAAPA Expo uses the West and South Buildings in 2026; our stand is in the South Building. IAAPA Security Office: Room S211, Level 2. Sales Office & Exhibitor Lounge: Room S230A, Level 2."
   },
   {
    "type": "floorplan",
    "title": "Floor Plan",
-   "image": "",
-   "caption": "Stand number and floor plan to be added."
+   "image": "assets/orlando/floorplan.jpg",
+   "alt": "IAAPA Expo 2026 floor plan - Greenspan Projects Ltd, stand S5186",
+   "caption": "Our stand is <b>S5186</b> (Greenspan Projects Ltd), 30&prime; &times; 40&prime;, in the Family Entertainment area, directly above Art Attack (S5181)."
+  },
+  {
+   "type": "floorplan",
+   "title": "Hall overview",
+   "image": "assets/orlando/hall.jpg",
+   "alt": "IAAPA Expo 2026 hall plan with stand S5186 circled",
+   "caption": "Our stand is circled. Plan dated 15 Oct 2026."
+  },
+  {
+   "type": "notes",
+   "title": "Show hours & access",
+   "html": "<p style=\"margin:0 0 16px; color:var(--ink-soft);\">From the IAAPA Exhibitor Welcome Guide (updated 24 Jun 2026). Education runs Mon 16 &ndash; Thu 19 Nov; the show floor is open 17&ndash;20 Nov.</p><h4 class=\"info-h4\" style=\"margin:0 0 10px;\">Show hours</h4><div class=\"kv\"><div class=\"kv-row\"><div class=\"kv-k\">Tue 17 Nov</div><div class=\"kv-v\">10am &ndash; 6pm</div></div><div class=\"kv-row\"><div class=\"kv-k\">Wed 18 Nov</div><div class=\"kv-v\">10am &ndash; 6pm</div></div><div class=\"kv-row\"><div class=\"kv-k\">Thu 19 Nov</div><div class=\"kv-v\">10am &ndash; 6pm</div></div><div class=\"kv-row\"><div class=\"kv-k\">Fri 20 Nov</div><div class=\"kv-v\">10am &ndash; 4pm</div></div></div><p style=\"margin:12px 0 0; color:var(--ink-soft);\">Exhibitors can access the floor from 7:30am on show days. On 17&ndash;19 Nov everyone must be off the show floor by 7pm.</p><h4 class=\"info-h4\" style=\"margin:22px 0 10px;\">Badges &amp; wristbands</h4><ul style=\"margin:0; padding-left:18px; line-height:1.8;\"><li>Exhibitor registration opens <b>12pm Sat 14 Nov</b>; collect exhibitor badges after that.</li><li>Wristbands can be worn for move-in <b>through Sun 15 Nov</b>. They are <b>not valid on Mon 16 Nov</b> &ndash; exhibitor badge needed.</li><li>Companies outside the continental US (or who missed the 2 Oct request) can collect wristbands from <b>Thu 12 Nov</b> at the IAAPA Security Office, <b>Room S211, Level 2, South Building</b>.</li><li>Move-out: anyone helping needs an exhibitor badge or wristband. Non-exhibitors can&rsquo;t be on the floor; giving wristbands to buyers or contractors is a $300 fine.</li><li>Register staff only through Exhibitor Registration in the Exhibitor Resource Center &ndash; not the individual or group links.</li><li>Exhibitor Lounge (complimentary drinks, credentials needed): Room S230A, Level 2, South Building.</li></ul>"
+  },
+  {
+   "type": "notes",
+   "title": "Move-in & move-out windows",
+   "html": "<h4 class=\"info-h4\" style=\"margin:0 0 10px;\">South Building move-in</h4><div class=\"kv\"><div class=\"kv-row\"><div class=\"kv-k\">Thu 12 Nov</div><div class=\"kv-v\">8am&ndash;5pm &middot; Targeted</div></div><div class=\"kv-row\"><div class=\"kv-k\">Fri 13 Nov</div><div class=\"kv-v\">8am&ndash;5pm &middot; Targeted</div></div><div class=\"kv-row\"><div class=\"kv-k\">Sat 14 Nov</div><div class=\"kv-v\">8am&ndash;7pm &middot; General</div></div><div class=\"kv-row\"><div class=\"kv-k\">Sun 15 Nov</div><div class=\"kv-v\">8am&ndash;7pm &middot; General</div></div><div class=\"kv-row\"><div class=\"kv-k\">Mon 16 Nov</div><div class=\"kv-v\">8am&ndash;8pm &middot; General (booth set by 5pm)</div></div></div><p style=\"margin:12px 0 0; color:var(--ink-soft);\">Our targeted slot is <b style=\"color:var(--ink);\">Thu 12 Nov, 1pm</b> (Yellow). The target only governs when <i>direct freight</i> should arrive &ndash; set-up doesn&rsquo;t have to start that day. Only targeted exhibitors can be on the floor before Sat 14 Nov.</p><h4 class=\"info-h4\" style=\"margin:22px 0 10px;\">South Building move-out</h4><p style=\"margin:0 0 8px; color:var(--ink-soft);\"><b style=\"color:var(--ink);\">Hall NA</b></p><div class=\"kv\"><div class=\"kv-row\"><div class=\"kv-k\">Fri 20 Nov</div><div class=\"kv-v\">4pm &ndash; 1am</div></div><div class=\"kv-row\"><div class=\"kv-k\">Sat 21 Nov</div><div class=\"kv-v\">8am &ndash; 5pm</div></div><div class=\"kv-row\"><div class=\"kv-k\">Sun 22 Nov</div><div class=\"kv-v\">8am &ndash; 12pm &middot; carriers checked in by 8am, all materials out by 12pm</div></div></div><p style=\"margin:14px 0 8px; color:var(--ink-soft);\"><b style=\"color:var(--ink);\">Halls SA, SB and NB</b></p><div class=\"kv\"><div class=\"kv-row\"><div class=\"kv-k\">Fri 20 Nov</div><div class=\"kv-v\">4pm &ndash; 1am</div></div><div class=\"kv-row\"><div class=\"kv-k\">Sat 21 Nov</div><div class=\"kv-v\">8am &ndash; 5pm</div></div><div class=\"kv-row\"><div class=\"kv-k\">Sun 22 Nov</div><div class=\"kv-v\">8am &ndash; 5pm</div></div><div class=\"kv-row\"><div class=\"kv-k\">Mon 23 Nov</div><div class=\"kv-v\">8am &ndash; 12pm &middot; carriers checked in by 8am, all materials out by 12pm</div></div></div><p style=\"margin:12px 0 0; color:var(--ink-soft);\">Contractors and anyone helping with move-out on Fri 20 Nov can&rsquo;t enter the floor until <b style=\"color:var(--ink);\">5pm</b> (attendees exit and GES rolls up the aisle carpet). Outbound shipments need a GES material handling agreement from the GES Exhibitor Service Desk.</p><div class=\"notice warn\" style=\"margin:16px 0 0;\"><b>To confirm:</b> which hall S5186 is in decides whether move-out finishes Sun 22 or Mon 23 Nov. Also, the Welcome Guide says materials must be out by <b>12pm Mon 23 Nov</b> (Halls SA/SB/NB) while the GES timetable below shows <b>2pm</b> for Yellow &ndash; check with GES which applies.</div>"
+  },
+  {
+   "type": "notes",
+   "title": "Freight – move-in and move-out",
+   "html": "<p style=\"margin:0 0 16px; color:var(--ink-soft);\">Greenspan (S5186) is in the <b style=\"color:var(--ink);\">Yellow</b> target group for both move-in and move-out. Times are from the GES freight timetable plotted 15 Oct 2026 and match the Welcome Guide for crate tagging (2pm Sat 14 Nov).</p><h4 class=\"info-h4\">Move-in &ndash; Yellow</h4><div class=\"kv\"><div class=\"kv-row\"><div class=\"kv-k\">Target date and time</div><div class=\"kv-v\">Thu 12 Nov &middot; 1:00pm</div></div><div class=\"kv-row\"><div class=\"kv-k\">Warehouse freight &ndash; delivered to booth</div><div class=\"kv-v\">Thu 12 Nov &middot; 12:00pm</div></div><div class=\"kv-row\"><div class=\"kv-k\">Marshalling yard direct freight check-in</div><div class=\"kv-v\">Thu 12 Nov &middot; 10:00am&ndash;2:30pm</div></div><div class=\"kv-row\"><div class=\"kv-k\">Direct freight unloading time in the hall</div><div class=\"kv-v\">Thu 12 Nov &middot; 1:00pm&ndash;5:00pm</div></div><div class=\"kv-row\"><div class=\"kv-k\">Recommended installation of direct shipments &ndash; start</div><div class=\"kv-v\">Fri 13 Nov &middot; 8:00am</div></div><div class=\"kv-row\"><div class=\"kv-k\">Empty crates must be tagged by</div><div class=\"kv-v\">Sat 14 Nov &middot; 2:00pm</div></div></div><h4 class=\"info-h4\" style=\"margin-top:20px;\">Move-out &ndash; Yellow</h4><div class=\"kv\"><div class=\"kv-row\"><div class=\"kv-k\">Target date and time</div><div class=\"kv-v\">Mon 23 Nov &middot; 8:00am</div></div><div class=\"kv-row\"><div class=\"kv-k\">Dismantle start time</div><div class=\"kv-v\">Fri 20 Nov &middot; 4:00pm</div></div><div class=\"kv-row\"><div class=\"kv-k\">Marshalling yard carrier check-in</div><div class=\"kv-v\">Mon 23 Nov &middot; 6:00am&ndash;9:00am</div></div><div class=\"kv-row\"><div class=\"kv-k\">Freight packed and labeled / MHA turned in by</div><div class=\"kv-v\">Mon 23 Nov &middot; 10:00am</div></div><div class=\"kv-row\"><div class=\"kv-k\">Exhibitor materials clear</div><div class=\"kv-v\">Mon 23 Nov &middot; 2:00pm</div></div></div><h4 class=\"info-h4\" style=\"margin-top:20px;\">Original timetable (Yellow rows highlighted)</h4><img class=\"info-img\" src=\"assets/orlando/freight.jpg\" alt=\"IAAPA 2026 freight move-in and move-out timetable with the Yellow rows highlighted\">"
+  },
+  {
+   "type": "notes",
+   "title": "Hand-carry, parking & trucks",
+   "html": "<h4 class=\"info-h4\" style=\"margin:0 0 10px;\">Hand-carry (private vehicle) deliveries</h4><ul style=\"margin:0; padding-left:18px; line-height:1.8;\"><li>POV area is for private vehicles, small rental trucks up to 22&prime; or trailers up to 22&prime;. Unload and move the vehicle within <b>30 minutes</b>.</li><li>Two licensed drivers per vehicle; one must stay with it at all times.</li><li>Allowed: items on a two-wheel or four-wheel dolly (one person), or products on wheels rolled in by one person.</li><li>Not allowed: anything in a crate, anything motorised, crates on wheels, heavy stacks, or anything needing several people.</li></ul><h4 class=\"info-h4\" style=\"margin:22px 0 10px;\">Parking</h4><ul style=\"margin:0; padding-left:18px; line-height:1.8;\"><li>Free during move-in (12&ndash;16 Nov) and move-out (after 4pm Fri 20 Nov to 12pm Mon 23 Nov). Show the <b>OCCC Exhibitor Parking QR code</b> plus exhibitor badge or booth confirmation (QR code issued closer to the show).</li><li>Show days (17&ndash;20 Nov): normal daily rate. OCCC is cashless; pre-pay online is available. No overnight parking (towed).</li><li>Large trucks and detachable trailers: designated lot open 12&ndash;23 Nov, <b>US$90 per vehicle</b>. Advance orders closed 30 Oct; after that buy at the Security Office (Room S211, Level 2, 8am&ndash;5pm daily from 12 Nov).</li></ul><h4 class=\"info-h4\" style=\"margin:22px 0 10px;\">Getting around</h4><p style=\"margin:0; color:var(--ink-soft);\">IAAPA&rsquo;s advice: taxis and Uber can add 20&ndash;30 minutes or more to the trip back to the hotel &ndash; plan for it.</p>"
+  },
+  {
+   "type": "notes",
+   "title": "Show rules",
+   "html": "<h4 class=\"info-h4\" style=\"margin:0 0 10px;\">Penalties to avoid</h4><ul style=\"margin:0; padding-left:18px; line-height:1.8;\"><li>Late set-up (booth not set or in the process of being set by 5pm Mon 16 Nov).</li><li>Early tear-down before 4pm Fri 20 Nov, or booth unstaffed for more than 30 minutes.</li><li>Sharing or co-locating booth space or advertising for another company.</li><li>Cash-and-carry sales; product or literature displayed or handed out outside the booth.</li><li>Costume characters outside the booth (unless in transit or using the changing room).</li><li>Noise above 75dB; queues or crowds that block aisles or other booths; buyers wearing exhibitor badges.</li></ul><p style=\"margin:14px 0 0; color:var(--ink-soft);\">Penalties are fines and/or loss of exhibit seniority. Booths with a <b style=\"color:var(--ink);\">dynamic device</b> (moves a participant through a fixed course) must send someone to a CLM Risk Management safety session on <b style=\"color:var(--ink);\">Mon 16 Nov at 10am or 3pm</b> and keep a first aid kit and fire extinguisher in the booth.</p>"
+  },
+  {
+   "type": "notes",
+   "title": "Official contractors & deadlines",
+   "html": "<p style=\"margin:0 0 16px; color:var(--ink-soft);\">Official contractors and their published discount deadlines (Welcome Guide, 24 Jun 2026). &ldquo;Exclusive&rdquo; services can only be bought from that contractor. Check each site for current pricing.</p><div class=\"kv\"><div class=\"kv-row\"><div class=\"kv-k\">GES &ndash; booth packages, carpet, furnishings, graphics, install/dismantle labour; exclusive: cleaning, forklift &amp; labour, material handling</div><div class=\"kv-v\">Oct 16</div></div><div class=\"kv-row\"><div class=\"kv-k\">Orange County Convention Center &ndash; exclusive: electrical, air/water/drain/gas, rigging &amp; sign hanging, aerial lighting</div><div class=\"kv-v\">Oct 12</div></div><div class=\"kv-row\"><div class=\"kv-k\">PRG &ndash; audio/visual, computers</div><div class=\"kv-v\">Oct 16</div></div><div class=\"kv-row\"><div class=\"kv-k\">Sodexo Live! &ndash; exclusive catering and sample distribution; storage</div><div class=\"kv-v\">Catering &amp; storage Oct 18 &middot; sampling approval Oct 27</div></div><div class=\"kv-row\"><div class=\"kv-k\">Smart City &ndash; exclusive internet and telephone</div><div class=\"kv-v\">Oct 12</div></div><div class=\"kv-row\"><div class=\"kv-k\">MCI &ndash; lead retrieval</div><div class=\"kv-v\">Early bird Sept 21 &middot; advance Oct 19</div></div><div class=\"kv-row\"><div class=\"kv-k\">Events TNT &ndash; booth security</div><div class=\"kv-v\">Nov 12</div></div><div class=\"kv-row\"><div class=\"kv-k\">TLC Convention Plant Services &ndash; plants, floral</div><div class=\"kv-v\">Nov 6</div></div><div class=\"kv-row\"><div class=\"kv-k\">Steven Miller Photography &ndash; photo, video</div><div class=\"kv-v\">Nov 6</div></div><div class=\"kv-row\"><div class=\"kv-k\">Image &ndash; interpreters, hosts &amp; talent</div><div class=\"kv-v\">No deadline</div></div><div class=\"kv-row\"><div class=\"kv-k\">DSV &ndash; international shipping</div><div class=\"kv-v\">Varies by method</div></div><div class=\"kv-row\"><div class=\"kv-k\">onPeak &ndash; official housing (group-rate hotels)</div><div class=\"kv-v\">No deadline</div></div></div><h4 class=\"info-h4\" style=\"margin:22px 0 10px;\">Required exhibitor forms</h4><ul style=\"margin:0; padding-left:18px; line-height:1.8;\"><li>Booth Layout Form &ndash; Sept 11 (all exhibitors).</li><li>Audience Participation Safety Form &ndash; Oct 2 (all exhibitors).</li><li>Certificate of Insurance Form &ndash; Oct 9 (all exhibitors; extra cover needed for dynamic products, open flame/heat devices, or food and drink not supplied by Sodexo).</li><li>Exhibitor Appointed Contractors (non-official labour such as install/dismantle crews) must register by Oct 13.</li></ul><p style=\"margin:14px 0 0; color:var(--ink-soft);\">Everything is managed in the IAAPA <b style=\"color:var(--ink);\">Exhibitor Resource Center</b> (forms, checklist, badges, guest invites).</p>"
+  },
+  {
+   "type": "notes",
+   "title": "IAAPA contacts",
+   "html": "<div class=\"kv\"><div class=\"kv-row\"><div class=\"kv-k\">Exhibitor assistance</div><div class=\"kv-v\"><a href=\"mailto:Exhibitors@IAAPA.org\">Exhibitors@IAAPA.org</a></div></div><div class=\"kv-row\"><div class=\"kv-k\">Registration support</div><div class=\"kv-v\"><a href=\"mailto:IAAPAExpo@jade.mcievents.com\">IAAPAExpo@jade.mcievents.com</a></div></div><div class=\"kv-row\"><div class=\"kv-k\">Exhibit sales</div><div class=\"kv-v\"><a href=\"mailto:ExhibitSales@IAAPA.org\">ExhibitSales@IAAPA.org</a></div></div><div class=\"kv-row\"><div class=\"kv-k\">Connect+ (profile and app)</div><div class=\"kv-v\"><a href=\"mailto:ConnectPlus@IAAPA.org\">ConnectPlus@IAAPA.org</a></div></div><div class=\"kv-row\"><div class=\"kv-k\">Press and media</div><div class=\"kv-v\"><a href=\"mailto:PressOffice@IAAPA.org\">PressOffice@IAAPA.org</a></div></div><div class=\"kv-row\"><div class=\"kv-k\">IAAPA headquarters</div><div class=\"kv-v\">4155 West Taft Vineland Road, Orlando, FL 32837 &middot; +1 (321) 319-7600</div></div></div>"
   }
  ],
  "shifts": [],
+ "flights": [],
  "accom": [],
  "actions": [],
- "links": []
+ "links": [],
+ "accessNotice": "<b>Key rules</b> &ndash; Booth must be set (or in the process of being set) by <b>5pm Mon 16 Nov</b> or a late set-up penalty applies. Booths must stay staffed and intact until <b>4pm Fri 20 Nov</b> (early tear-down penalty). Exhibitors can be on the floor from 7:30am on show days and must be off it by 7pm on 17&ndash;19 Nov.<div class=\"sep\"><b>Crates:</b> tag empties for removal by <b>2pm Sat 14 Nov</b> (Yellow) or a $50-per-crate surcharge applies. <b>Badges:</b> wristbands only work for move-in up to Sun 15 Nov &ndash; everyone needs an exhibitor badge from Mon 16 Nov (registration opens 12pm Sat 14 Nov).</div>"
 });

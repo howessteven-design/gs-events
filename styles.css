@@ -299,3 +299,54 @@ a.link-card:hover{transform:translateY(-2px); box-shadow:var(--shadow-hover); bo
   .badge,.phase-tag,.m-ico{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
 }
 @media (prefers-reduced-motion:reduce){ *{transition:none !important;} }
+
+/* ---------- Admin / edit mode ---------- */
+.panel-tools{display:flex; align-items:center; gap:10px;}
+.panel-add:empty{display:none;}
+.icon-btn{background:none; border:none; cursor:pointer; color:var(--ink-soft); padding:6px; border-radius:8px; display:inline-grid; place-items:center;}
+.icon-btn:hover{color:var(--ink); background:var(--off-bg);}
+.icon-btn.del:hover{color:var(--danger); background:rgba(179,38,30,.1);}
+td.row-actions{white-space:nowrap; text-align:right; width:1%;}
+th.edit-col{width:1%;}
+.editbar{
+  margin:22px 0 0; padding:14px 18px; border-radius:14px; background:var(--panel);
+  border:1.5px dashed #7E5CE9; display:flex; justify-content:space-between; align-items:center; gap:12px 18px; flex-wrap:wrap;
+}
+.editbar .eb-left{display:flex; align-items:center; gap:12px; flex-wrap:wrap; font-size:13.5px; color:var(--ink-soft);}
+.eb-pill{background:var(--grad); color:#fff; font-weight:800; font-size:11px; letter-spacing:.14em; text-transform:uppercase; padding:4px 11px; border-radius:999px;}
+.eb-state.dirty{color:var(--custfacing); font-weight:700;}
+.editbar .eb-right{display:flex; gap:8px; flex-wrap:wrap;}
+.editbar .eb-note{flex-basis:100%; font-size:12.5px; color:var(--ink-soft);}
+.editbar code{background:var(--off-bg); padding:2px 6px; border-radius:6px; font-size:12px; user-select:all;}
+button.btn.attn{background:var(--navy); color:#fff; border-color:var(--navy);}
+:root[data-theme="dark"] button.btn.attn{background:#fff; color:#0F152F; border-color:#fff;}
+.toast{position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:var(--navy); color:#fff; padding:12px 20px; border-radius:12px; font-size:14px; z-index:80; box-shadow:0 10px 30px rgba(0,0,0,.35); max-width:min(92vw,560px); text-align:center;}
+.toast code{background:rgba(255,255,255,.14); padding:1px 6px; border-radius:6px;}
+/* form modal */
+.form-grid{display:grid; grid-template-columns:1fr 1fr; gap:0 14px;}
+.field{grid-column:span 2; margin-bottom:14px;}
+.field.half{grid-column:span 1;}
+.field label{display:block; font-size:12px; font-weight:700; color:var(--ink-soft); margin-bottom:6px; letter-spacing:.02em;}
+.field label .req{color:var(--support);}
+.field input, .field select, .field textarea{
+  width:100%; padding:10px 12px; border:1px solid var(--hairline); border-radius:10px;
+  font-family:inherit; font-size:14px; background:var(--panel-2); color:var(--ink);
+}
+.field textarea{resize:vertical; line-height:1.5;}
+.field input:focus, .field select:focus, .field textarea:focus{outline:2px solid #7E5CE9; outline-offset:0; border-color:transparent;}
+.field .hint{font-size:12px; color:var(--ink-soft); margin-top:5px;}
+.field .checks{display:flex; flex-wrap:wrap; gap:8px 16px;}
+.field .checks label{display:flex; align-items:center; gap:7px; font-size:14px; font-weight:500; color:var(--ink); margin:0;}
+.field .checks input{width:auto;}
+.form-error{color:var(--danger); font-size:13px; font-weight:600; min-height:18px; margin-top:2px;}
+@media (max-width:720px){ .toolbar{display:none;} .editbar{margin-top:16px;} .form-grid{grid-template-columns:1fr;} .field.half{grid-column:span 1;} .field{grid-column:span 1;} }
+@media print{ .editbar,.panel-add,.edit-col,.row-actions,.icon-btn,.toast{display:none !important;} }
+
+/* key/value rows (freight timetable etc.) */
+.kv{border:1px solid var(--hairline); border-radius:12px; overflow:hidden;}
+.kv-row{display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:12px; padding:11px 16px; border-bottom:1px solid var(--hairline); font-size:14px;}
+.kv-row:last-child{border-bottom:none;}
+.kv-row:nth-child(even){background:var(--panel-2);}
+.kv-k{color:var(--ink-soft);}
+.kv-v{font-weight:700; text-align:right; color:var(--ink);}
+@media (max-width:720px){ .kv-row{grid-template-columns:1fr; gap:2px;} .kv-v{text-align:left;} }

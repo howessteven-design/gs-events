@@ -7,15 +7,17 @@ const TEAM_CLASS = { 'Sales':'sales', 'Support':'support', 'N/A':'off' };
 const ACC_CLASS = { 'Hotel Booked':'acc-booked', 'Alternative Accommodation':'acc-alt', 'TBC':'acc-tbc' };
 const ACC_LABEL = { 'Hotel Booked':'Hotel booked', 'Alternative Accommodation':'Alternative accommodation', 'TBC':'TBC' };
 const STATUS_CLASS = { 'Open':'status-open', 'In Progress':'status-progress', 'Done':'status-done', 'Confirmed':'status-done', 'Needs content':'status-progress', 'TBC':'status-open', 'To order':'status-open', 'Ordered':'status-progress', 'On stand':'status-done' };
-const TAB_LABEL = { rota:'Staff rota', accom:'Accommodation', people:'Staff', info:'Show info', mkt:'MKT Only' };
+const TAB_LABEL = { rota:'Staff rota', accom:'Accommodation', flights:'Flights', people:'Staff', info:'Show info', mkt:'MKT Only' };
 const DOW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const MONTH = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sept','Oct','Nov','Dec'];
 
 let EVENT = null;          // currently selected event object
-let shifts = [], accom = [], actions = [], links = [];
+let shifts = [], accom = [], flights = [], actions = [], links = [];
 let EVENT_DAYS = [];
 let activeTab = 'rota';
 let activeDay = null;
+const EDIT = new URLSearchParams(location.search).has('admin');   // ?admin=1 shows the edit tools
+const DIR_CLASS = { 'Outbound':'build', 'Return':'both', 'Other':'off' };
 
 /* ---------- helpers ---------- */
 function escapeHtml(str){
@@ -39,12 +41,18 @@ function bindPeople(root){
   root.querySelectorAll('[data-person]').forEach(b=>b.addEventListener('click', ()=>openPersonModal(b.getAttribute('data-person'))));
 }
 const $ = id => document.getElementById(id);
+function uid(){ return 'r' + Math.random().toString(36).slice(2,10); }
 const ICON = {
   rota:  '<path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>',
   accom: '<path d="M3 20V8l9-5 9 5v12M9 20v-6h6v6"/>',
   people:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-3.5 3.2-5.5 6.5-5.5s6 2 6.5 5.5M16 4.5a3.5 3.5 0 0 1 0 7M18 14.8c2 .6 3.3 2.3 3.5 5.2"/>',
   info:  '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/>',
   mkt:   '<path d="M4 6h16M4 12h10M4 18h7"/><path d="M17 15l2 2 3-4"/>',
+  flights:'<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.2.4c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>',
+  edit:  '<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+  trash: '<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/>',
+  plus:  '<path d="M12 5v14M5 12h14"/>',
+  download:'<path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/>',
   total: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-3.5 3.2-5.5 6.5-5.5s6 2 6.5 5.5M16 4.5a3.5 3.5 0 0 1 0 7M18 14.8c2 .6 3.3 2.3 3.5 5.2"/>',
   build: '<path d="M14.5 6.5l3 3M3 21l7.5-7.5M13 4l7 7-3 3-7-7z"/>',
   sales: '<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>',
@@ -65,8 +73,8 @@ function initials(name){
 function phaseClass(p){
   const t = (p||'').toLowerCase();
   if (t.includes('show')) return 'p-show';
-  if (t.includes('takedown') || t.includes('breakdown')) return 'p-takedown';
-  if (t.includes('build')) return 'p-build';
+  if (t.includes('takedown') || t.includes('breakdown') || t.includes('move-out')) return 'p-takedown';
+  if (t.includes('build') || t.includes('move-in')) return 'p-build';
   return '';
 }
 
@@ -89,23 +97,49 @@ function initSelector(){
   loadEvent(start.id);
 }
 
-function loadEvent(id){
-  EVENT = getEvents().find(e=>e.id===id);
-  shifts  = (EVENT.shifts  || []).map(x=>({...x}));
-  accom   = (EVENT.accom   || []).map(x=>({...x}));
-  actions = (EVENT.actions || []).map(x=>({...x}));
-  links   = (EVENT.links   || []).map(x=>({...x}));
+function recomputeDays(){
   EVENT_DAYS = (EVENT.days || []).map(d=>{
     const dt = parseISO(d.date);
     return { date:d.date, phase:d.phase, dow:DOW[dt.getUTCDay()], num:String(dt.getUTCDate()) };
   });
+}
+
+function loadEvent(id){
+  EVENT = getEvents().find(e=>e.id===id);
+  // arrays live on the event object itself, so edits (admin mode) survive switching events
+  ['shifts','accom','flights','actions','links','info','days'].forEach(k=>{ EVENT[k] = EVENT[k] || []; });
+  shifts = EVENT.shifts; accom = EVENT.accom; flights = EVENT.flights; actions = EVENT.actions; links = EVENT.links;
   activeDay = null;
   document.title = `${EVENT.title} | Greenspan Events HQ`;
-  renderHeader();
   renderTabs();
   const tabs = EVENT.tabs || ['rota','accom','people','info','mkt'];
   switchTab(tabs.includes(activeTab) ? activeTab : tabs[0]);
-  render(); renderAccom(); renderPeopleNotice(); renderActions(); renderInfo(); renderLinks(); renderExpenses();
+  renderAll();
+}
+
+function renderAll(){
+  recomputeDays();
+  renderHeader(); render(); renderAccom(); renderFlights(); renderPeopleNotice();
+  renderActions(); renderInfo(); renderLinks(); renderExpenses();
+  if (activeTab==='people') renderPeople();
+  syncEditUI();
+}
+
+/* admin-mode helpers (the edit logic itself lives in edit.js) */
+function rowActions(kind, id){
+  if (!EDIT) return '';
+  return `<td class="row-actions" data-label=""><button class="icon-btn" type="button" data-edit="${kind}" data-id="${escapeHtml(String(id))}" aria-label="Edit">${svg('edit',15)}</button><button class="icon-btn del" type="button" data-del="${kind}" data-id="${escapeHtml(String(id))}" aria-label="Delete">${svg('trash',15)}</button></td>`;
+}
+function syncEditUI(){
+  document.body.classList.toggle('is-edit', EDIT);
+  if (!EDIT) return;
+  document.querySelectorAll('table[data-editable] thead tr').forEach(tr=>{
+    if (!tr.querySelector('.edit-col')) tr.insertAdjacentHTML('beforeend','<th class="edit-col"></th>');
+  });
+  document.querySelectorAll('[data-add]').forEach(el=>{
+    el.innerHTML = `<button class="btn" type="button" data-add-btn="${el.dataset.add}">${svg('plus',14)} ${el.dataset.label}</button>`;
+  });
+  if (window.updateEditBar) window.updateEditBar();
 }
 
 /* ---------- header / tabs ---------- */
@@ -133,7 +167,7 @@ function renderTabs(){
 function switchTab(tab){
   activeTab = tab;
   document.querySelectorAll('#tabs .tab-btn').forEach(b=>{ const on = b.getAttribute('data-tab')===tab; b.classList.toggle('active', on); b.setAttribute('aria-selected', on); });
-  ['rota','accom','people','info','mkt'].forEach(t=>{ $(t+'View').style.display = t===tab ? '' : 'none'; });
+  ['rota','accom','flights','people','info','mkt'].forEach(t=>{ $(t+'View').style.display = t===tab ? '' : 'none'; });
   if (tab==='people') renderPeople();
 }
 
@@ -200,7 +234,7 @@ function renderTable(){
       <td data-label="Date">${fmtDate(s.date)}</td>
       <td data-label="Activity">${escapeHtml(s.activity)}</td>
       <td data-label="Time">${timeRange(s)}</td>
-      <td data-label="Notes">${escapeHtml(s.notes||'')}</td>
+      <td data-label="Notes">${escapeHtml(s.notes||'')}</td>${rowActions('shifts', s.id)}
     </tr>`).join('');
   bindPeople(body);
 }
@@ -231,14 +265,46 @@ function renderAccom(){
       <td data-label="Check-out">${a.checkout ? fmtDate(a.checkout) : '&ndash;'}</td>
       <td data-label="Nights">${nightsBetween(a.checkin, a.checkout) || '&ndash;'}</td>
       <td data-label="Booking ref">${escapeHtml(a.ref||'')}</td>
-      <td data-label="Notes">${escapeHtml(a.notes||'')}</td>
+      <td data-label="Notes">${escapeHtml(a.notes||'')}</td>${rowActions('accom', a.id)}
+    </tr>`).join('');
+  bindPeople(body);
+}
+
+/* ---------- flights ---------- */
+function flightWhen(date, time){
+  if (!date && !time) return '&ndash;';
+  return `${date ? fmtDate(date) : ''}${time ? `${date ? ' &middot; ' : ''}${escapeHtml(time)}` : ''}`;
+}
+function renderFlights(){
+  const key = f => (f.name||'').trim().toLowerCase();
+  const travellers = new Set(flights.map(key).filter(Boolean)).size;
+  const out = flights.filter(f=>f.direction==='Outbound').length;
+  const ret = flights.filter(f=>f.direction==='Return').length;
+  const tbc = flights.filter(f=>f.status==='TBC').length;
+  $('flightsSummaryRow').innerHTML =
+    metric('Travellers', travellers, 'total', 'lav') + metric('Outbound', out, 'flights', 'teal') +
+    metric('Return', ret, 'flights', 'peach') + metric('Still TBC', tbc, 'tbc', 'pink');
+  $('flightsCount').textContent = flights.length ? `${flights.length} flight${flights.length===1?'':'s'}` : '';
+  const body = $('flightsBody');
+  if (!flights.length){ body.innerHTML = `<tr class="empty"><td colspan="8">No flights added yet.</td></tr>`; return; }
+  const sorted = [...flights].sort((a,b)=> ((a.departDate||'9999')+(a.departTime||'')).localeCompare((b.departDate||'9999')+(b.departTime||'')) || a.name.localeCompare(b.name));
+  body.innerHTML = sorted.map(f=>`
+    <tr>
+      <td data-label="Name"><button class="person-link" data-person="${escapeHtml(f.name)}">${escapeHtml(f.name)}</button></td>
+      <td data-label="Direction"><span class="badge ${DIR_CLASS[f.direction]||'off'}">${escapeHtml(f.direction||'Flight')}</span>${f.status==='TBC' ? ' <span class="badge acc-tbc">TBC</span>' : ''}</td>
+      <td data-label="Flight"><b>${escapeHtml(((f.airline||'')+' '+(f.flightNo||'')).trim()) || '&ndash;'}</b></td>
+      <td data-label="Route">${f.from||f.to ? `${escapeHtml(f.from||'?')} &rarr; ${escapeHtml(f.to||'?')}` : '&ndash;'}</td>
+      <td data-label="Departs">${flightWhen(f.departDate, f.departTime)}</td>
+      <td data-label="Arrives">${flightWhen(f.arriveDate, f.arriveTime)}</td>
+      <td data-label="Booking ref">${escapeHtml(f.ref||'')}</td>
+      <td data-label="Notes">${escapeHtml(f.notes||'')}</td>${rowActions('flights', f.id)}
     </tr>`).join('');
   bindPeople(body);
 }
 
 /* ---------- people ---------- */
 function getAllNames(){
-  return [...new Set([...shifts.map(s=>s.name), ...accom.map(a=>a.name)])].sort((a,b)=>a.localeCompare(b));
+  return [...new Set([...shifts.map(s=>s.name), ...accom.map(a=>a.name), ...flights.map(f=>f.name)])].sort((a,b)=>a.localeCompare(b));
 }
 function personRoleTeam(name){
   const s = shifts.find(x=>x.name===name);
@@ -299,6 +365,19 @@ function openPersonModal(name){
       ${a.ref ? `<div class="ar-detail">Ref: ${escapeHtml(a.ref)}</div>` : ''}
       ${a.notes ? `<div class="ar-detail">${escapeHtml(a.notes)}</div>` : ''}
     </div>`).join('');
+  const myFlights = flights.filter(f=>f.name===name).sort((a,b)=>((a.departDate||'')+(a.departTime||'')).localeCompare((b.departDate||'')+(b.departTime||'')));
+  const showFlights = myFlights.length || (EVENT.tabs||[]).includes('flights');
+  $('personFlightsBlock').style.display = showFlights ? '' : 'none';
+  $('personFlights').innerHTML = !myFlights.length ? `<div class="empty-note">No flights recorded yet.</div>` : myFlights.map(f=>`
+    <div class="accom-row">
+      <div class="ar-top">
+        <span class="badge ${DIR_CLASS[f.direction]||'off'}">${escapeHtml(f.direction||'Flight')}${f.status==='TBC' ? ' &middot; TBC' : ''}</span>
+        <span class="ar-detail">${flightWhen(f.departDate, f.departTime)}</span>
+      </div>
+      <div class="ar-detail"><b style="color:var(--ink);">${escapeHtml(((f.airline||'')+' '+(f.flightNo||'')).trim())}</b>${f.from||f.to ? ` &middot; ${escapeHtml(f.from||'?')} &rarr; ${escapeHtml(f.to||'?')}` : ''}${f.arriveDate||f.arriveTime ? ` &middot; arrives ${flightWhen(f.arriveDate, f.arriveTime)}` : ''}</div>
+      ${f.ref ? `<div class="ar-detail">Ref: ${escapeHtml(f.ref)}</div>` : ''}
+      ${f.notes ? `<div class="ar-detail">${escapeHtml(f.notes)}</div>` : ''}
+    </div>`).join('');
   $('personModalBackdrop').classList.add('show');
 }
 function closePersonModal(){ $('personModalBackdrop').classList.remove('show'); }
@@ -306,7 +385,7 @@ function closePersonModal(){ $('personModalBackdrop').classList.remove('show'); 
 /* ---------- show info (config-driven sections) ---------- */
 function renderInfo(){
   const sections = EVENT.info || [];
-  $('infoSections').innerHTML = sections.map(sec=>{
+  $('infoSections').innerHTML = sections.map((sec, idx)=>{
     let inner = '';
     if (sec.type==='venue' || sec.type==='hotel'){
       inner = `<div class="info-pad">
@@ -336,15 +415,20 @@ function renderInfo(){
     } else { // generic notes section
       inner = `<div class="info-pad info-body" style="font-size:14px; line-height:1.6;">${sec.html || ''}</div>`;
     }
-    return `<section class="panel"><div class="panel-head"><h2>${escapeHtml(sec.title)}</h2></div>${inner}</section>`;
-  }).join('');
+    const ctrl = EDIT ? `<span class="panel-tools"><button class="icon-btn" type="button" data-edit="info" data-id="${idx}" aria-label="Edit section">${svg('edit',15)}</button><button class="icon-btn del" type="button" data-del="info" data-id="${idx}" aria-label="Delete section">${svg('trash',15)}</button></span>` : '';
+    return `<section class="panel"><div class="panel-head"><h2>${escapeHtml(sec.title)}</h2>${ctrl}</div>${inner}</section>`;
+  }).join('') + (EDIT ? `<div style="margin-bottom:22px;"><button class="btn" type="button" data-add-btn="info">${svg('plus',14)} Add info section</button></div>` : '');
 }
 
 function renderLinks(){
   $('linksCount').textContent = links.length ? `${links.length} link${links.length===1?'':'s'}` : '';
   const grid = $('linkGrid');
   if (!links.length){ grid.innerHTML = `<div class="empty-note">No links added yet.</div>`; return; }
-  grid.innerHTML = links.map(l=> l.url
+  grid.innerHTML = links.map(l=> EDIT
+    ? `<div class="link-card ${l.url ? '' : 'is-pending'}">
+        <div><div class="lc-label">${escapeHtml(l.label)}</div>${l.url ? `<div class="lc-notes">${escapeHtml(l.url)}</div>` : ''}${l.notes ? `<div class="${l.url ? 'lc-notes' : 'lc-empty'}">${escapeHtml(l.notes)}</div>` : ''}</div>
+        <span class="panel-tools"><button class="icon-btn" type="button" data-edit="links" data-id="${escapeHtml(l.id)}" aria-label="Edit">${svg('edit',15)}</button><button class="icon-btn del" type="button" data-del="links" data-id="${escapeHtml(l.id)}" aria-label="Delete">${svg('trash',15)}</button></span></div>`
+    : l.url
     ? `<a class="link-card" href="${escapeHtml(l.url)}" target="_blank" rel="noopener">
         <div><div class="lc-label">${escapeHtml(l.label)}</div>${l.notes ? `<div class="lc-notes">${escapeHtml(l.notes)}</div>` : ''}</div>
         <span class="lc-go">${svg('go',16)}</span></a>`
@@ -365,7 +449,7 @@ function renderActions(){
       <td data-label="Category"><b>${escapeHtml(a.category||'')}</b></td>
       <td data-label="Task">${escapeHtml(a.task)}</td>
       <td data-label="Status"><span class="badge ${STATUS_CLASS[a.status]||'status-open'}">${escapeHtml(a.status)}</span></td>
-      <td data-label="Notes">${escapeHtml(a.notes||'')}</td>
+      <td data-label="Notes">${escapeHtml(a.notes||'')}</td>${rowActions('actions', a.id)}
     </tr>`).join('');
 }
 
@@ -406,6 +490,16 @@ function exportExcel(){
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Staff Movements');
   XLSX.utils.book_append_sheet(wb, aws, 'Accommodation');
+  if (flights.length || (EVENT.tabs||[]).includes('flights')){
+    const fs = [...flights].sort((a,b)=>((a.departDate||'')+(a.departTime||'')).localeCompare((b.departDate||'')+(b.departTime||'')));
+    const fws = XLSX.utils.aoa_to_sheet([
+      ['Staff Name','Direction','Status','Airline','Flight No','From','To','Depart Date','Depart Time','Arrive Date','Arrive Time','Booking Reference','Notes'],
+      ...fs.map(f=>[f.name, f.direction||'', f.status||'', f.airline||'', f.flightNo||'', f.from||'', f.to||'',
+        f.departDate ? new Date(f.departDate+'T00:00:00') : '', f.departTime||'', f.arriveDate ? new Date(f.arriveDate+'T00:00:00') : '', f.arriveTime||'', f.ref||'', f.notes||''])]);
+    fws['!cols'] = [{wch:22},{wch:11},{wch:9},{wch:16},{wch:10},{wch:8},{wch:8},{wch:12},{wch:11},{wch:12},{wch:11},{wch:16},{wch:30}];
+    for (let r=1; r<=fs.length; r++){ [7,9].forEach(c=>{ const cell = fws[XLSX.utils.encode_cell({r, c})]; if (cell) cell.z = 'dd-mmm-yyyy'; }); }
+    XLSX.utils.book_append_sheet(wb, fws, 'Flights');
+  }
   const mws = XLSX.utils.aoa_to_sheet([['Category','Task','Status','Notes'], ...actions.map(a=>[a.category||'', a.task, a.status, a.notes||''])]);
   mws['!cols'] = [{wch:18},{wch:70},{wch:12},{wch:30}];
   XLSX.utils.book_append_sheet(wb, mws, 'MKT Only');
