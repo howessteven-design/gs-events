@@ -714,19 +714,19 @@
    "id": "ac_rod",
    "name": "Rod Morton",
    "type": "Hotel Booked",
-   "hotel": "Marriott Hotel",
-   "checkin": "2026-11-15",
+   "hotel": "JW Marriott Orlando, Grande Lakes 4040 Central Florida Parkway, Orlando, 32837, Florida, United States Of America 32837",
+   "checkin": "2026-11-16",
    "checkout": "2026-11-19",
-   "notes": "Hotel details to follow."
+   "ref": "4153948"
   },
   {
    "id": "ac_guy",
    "name": "Guy Morton",
    "type": "Hotel Booked",
-   "hotel": "Marriott Hotel",
-   "checkin": "2026-11-15",
+   "hotel": "JW Marriott Orlando, Grande Lakes 4040 Central Florida Parkway, Orlando, 32837, Florida, United States Of America 32837",
+   "checkin": "2026-11-16",
    "checkout": "2026-11-19",
-   "notes": "Hotel details to follow."
+   "ref": "4153948"
   }
  ],
  "actions": [],
