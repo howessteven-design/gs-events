@@ -397,3 +397,15 @@ tr.cover-row:hover td{background:var(--info-bg);}
 .trav{font-size:12.5px; font-weight:600; color:var(--ink-soft);}
 .trav.warn{color:var(--custfacing);}
 .cover-names .trav{margin-left:4px;}
+
+/* ---- my-schedule mode: hide the clutter so the schedule sits right under the picker (phone first) ---- */
+#rotaView.me-mode .daystrip, #rotaView.me-mode #eveningStrip, #rotaView.me-mode .summary-row, #rotaView.me-mode .legend{display:none !important;}
+.rules-fold{margin:0 0 16px; border:1px solid var(--hairline); border-radius:14px; background:var(--panel); padding:2px 16px;}
+.rules-fold summary{cursor:pointer; padding:12px 0; font-size:13.5px; font-weight:700; color:var(--ink-soft);}
+.rules-fold[open] summary{margin-bottom:4px;}
+tr.evening-row td{background:var(--info-bg);}
+tr.evening-row:hover td{background:var(--info-bg);}
+.ev-attend{margin-top:10px; font-size:13.5px;}
+.ev-attend summary{cursor:pointer; color:var(--ink-soft); padding:4px 0;}
+.ev-attend .away{color:var(--custfacing); font-weight:700;}
+.ev-att-list{margin-top:6px; display:grid; gap:8px; line-height:1.6; color:var(--ink);}

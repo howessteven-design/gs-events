@@ -293,15 +293,15 @@ function renderSummary(){
 }
 
 function shiftRow(s, cls){
-  const virt = !!s.virtual;
+  const virt = !!s.virtual, eve = !!s.evening;
   return `
-    <tr class="${cls||''}${virt ? ' virtual' : ''}">
+    <tr class="${cls||''}${virt ? ' virtual' : ''}${eve ? ' evening-row' : ''}">
       <td data-label="Name"><button class="person-link" data-person="${escapeHtml(s.name)}">${escapeHtml(s.name)}</button></td>
       <td data-label="Type">${typeBadges(s.name, s.activity==='Off')}</td>
       <td data-label="Date">${fmtDate(s.date)}</td>
       <td data-label="Activity">${escapeHtml(s.activity)}</td>
       <td data-label="Time">${timeRange(s)}</td>
-      <td data-label="Notes">${escapeHtml(s.notes || (virt ? 'Default stand cover' : ''))}${travelHTML(s)}</td>${virt ? (EDIT ? '<td class="row-actions" data-label=""></td>' : '') : rowActions('shifts', s.id)}
+      <td data-label="Notes">${escapeHtml(s.notes || (virt ? 'Default stand cover' : ''))}${eve ? '' : travelHTML(s)}</td>${(virt || eve) ? (EDIT ? '<td class="row-actions" data-label=""></td>' : '') : rowActions('shifts', s.id)}
     </tr>`;
 }
 function renderTable(){
@@ -312,9 +312,12 @@ function renderTable(){
   if (me){ rows = rows.filter(s=>s.name===me); title.textContent = `My schedule - ${me}`; }
   else if (activeDay) title.textContent = `Roster - ${fmtDate(activeDay)}`;
   else title.textContent = 'All staff movements';
+  if (me && !activeDay){                              // my schedule also lists the evenings I can get to
+    (EVENT.evenings||[]).filter(e=>appliesTo(e,me) && attendance(e,me).status!=='no').forEach(e=>rows.push({ id:'e:'+e.id, name:me, date:e.date, activity:'Evening: '+e.title, start:e.start, end:e.end, notes:e.venue||'', evening:true }));
+  }
   if (activeDay) rows = rows.filter(s=>s.date===activeDay);
   if (activeDay && !me) rows = rows.filter(s=>s.activity !== 'Off');
-  rows.sort((a,b)=> a.date===b.date ? (a.virtual===b.virtual ? a.name.localeCompare(b.name) : (a.virtual ? -1 : 1)) : a.date.localeCompare(b.date));
+  rows.sort((a,b)=> a.date===b.date ? (me ? (a.start||'99').localeCompare(b.start||'99') : (a.virtual===b.virtual ? a.name.localeCompare(b.name) : (a.virtual ? -1 : 1))) : a.date.localeCompare(b.date));
   const group = !me && !activeDay && rows.some(s=>s.virtual || s.defaulted);      // overview: one line per day for the default cover
   const body = $('rotaBody');
   let html = '', shown = 0;
@@ -356,16 +359,16 @@ function renderMe(){
   if (!names.length){ el.innerHTML = ''; return; }
   const me = meName();
   el.innerHTML = `<label for="meSelect">Show</label><select id="meSelect"><option value="">Everyone</option>${names.map(n=>`<option value="${escapeHtml(n)}" ${n===me?'selected':''}>${escapeHtml(n)}</option>`).join('')}</select>${me ? '<span class="me-hint">Just your schedule &middot; remembered on this device</span>' : ''}`;
-  $('meSelect').addEventListener('change', e=>{ ME = e.target.value; lsSet('gs_me', ME); render(); renderEvenings(); });
+  $('meSelect').addEventListener('change', e=>{ ME = e.target.value; lsSet('gs_me', ME); render(); renderEvenings(); setTimeout(()=>{ const r = $('meRow'); if (r && r.scrollIntoView) r.scrollIntoView({ block:'start', behavior:'smooth' }); }, 60); });
 }
-function renderCoverNote(){
-  const days = standCoverDays(), el = $('coverNote');
-  if (!days.length){ el.innerHTML = ''; return; }
+function coverNoteHTML(){
+  const days = standCoverDays();
+  if (!days.length) return '';
   const groups = {};
   days.forEach(d=>{ const k = `${d.start}&ndash;${d.end}`; (groups[k] = groups[k] || []).push(d.date); });
   const parts = Object.entries(groups).map(([k,ds])=>`${ds.map(fmtDate).join(', ')}: <b>${k}</b>`).join(' &middot; ');
   const types = ((EVENT.standCover.types && EVENT.standCover.types.length) ? EVENT.standCover.types : ['Sales','Support']).join(' and ');
-  el.innerHTML = `<div class="notice info"><b>Stand cover</b> &ndash; ${types} are on the stand by default: ${parts}. Cover lunch and breaks between you. Only changes to this (half days, days off, late starts) are listed below &ndash; tap a day to see everyone, or pick your name to see just yours.</div>`;
+  return `<div class="notice info"><b>Stand cover</b> &ndash; ${types} are on the stand by default: ${parts}. Cover lunch and breaks between you. Only changes to this (half days, days off, late starts) are listed below &ndash; tap a day to see everyone, or pick your name to see just yours.</div>`;
 }
 function renderEveningStrip(){
   const el = $('eveningStrip'), all = [...(EVENT.evenings||[])];
@@ -375,8 +378,13 @@ function renderEveningStrip(){
 }
 
 function render(){
-  $('accessNotice').innerHTML = EVENT.accessNotice ? `<div class="notice warn">${EVENT.accessNotice}</div>` : '';
-  renderMe(); renderDaystrip(); renderEveningStrip(); renderCoverNote(); renderSummary(); renderTable();
+  const me = meName(), access = EVENT.accessNotice ? `<div class="notice warn">${EVENT.accessNotice}</div>` : '', cover = coverNoteHTML();
+  $('rotaView').classList.toggle('me-mode', !!me);      // phone-friendly: my own schedule straight under the picker
+  if (me){
+    $('accessNotice').innerHTML = (access || cover) ? `<details class="rules-fold"><summary>Key rules &amp; stand cover</summary>${access}${cover}</details>` : '';
+    $('coverNote').innerHTML = '';
+  } else { $('accessNotice').innerHTML = access; $('coverNote').innerHTML = cover; }
+  renderMe(); renderDaystrip(); renderEveningStrip(); renderSummary(); renderTable();
 }
 
 /* ---------- accommodation ---------- */
@@ -476,7 +484,7 @@ function openPersonModal(name){
   $('personModalTitle').textContent = name;
   $('personTags').innerHTML = (personTypes(name).map(t=>`<span class="badge ${TYPE_CLASS[t]}">${t}</span>`).join('') || '<span class="empty-note">No staff type set</span>') + (() => { const f = flightStatus(name); return ` <span class="badge ${f.cls}">${f.label}</span>`; })();
   const mine = effectiveShifts().filter(s=>s.name===name).map(s=>({ date:s.date, sort:s.start||'', label:s.activity, note:[s.notes || (s.virtual ? 'Default stand cover' : ''), (()=>{ const t = travelFor(s); return t ? t.text + (t.warn.length ? ' (check timing)' : '') : ''; })()].filter(Boolean).join(' \u00b7 '), time:timeRange(s) }));
-  (EVENT.evenings||[]).filter(e=>appliesTo(e,name)).forEach(e=>mine.push({ date:e.date, sort:e.start||'99', label:'Evening: '+e.title, note:e.venue||'', time:e.start ? `${e.start}${e.end ? '&ndash;'+e.end : ''}` : '' }));
+  (EVENT.evenings||[]).filter(e=>appliesTo(e,name) && attendance(e,name).status!=='no').forEach(e=>mine.push({ date:e.date, sort:e.start||'99', label:'Evening: '+e.title, note:e.venue||'', time:e.start ? `${e.start}${e.end ? '&ndash;'+e.end : ''}` : '' }));
   mine.sort((a,b)=>(a.date+a.sort).localeCompare(b.date+b.sort));
   $('personSchedule').innerHTML = !mine.length ? `<div class="empty-note">No shifts recorded yet.</div>` : mine.map(s=>`
     <div class="schedule-row">
@@ -522,6 +530,35 @@ function appliesTo(e, name){
   const list = (e.invited||'').split(/[\n,]/).map(x=>x.trim().toLowerCase()).filter(Boolean);
   return list.includes(String(name).toLowerCase());
 }
+/* Who can actually get to an evening event, worked out from flights (Outbound landing / Return take-off) */
+const EVE_ARRIVE_BUFFER = 60;    // minutes between landing and the event starting (airport -> hotel -> venue)
+const EVE_DEPART_BUFFER = 150;   // minutes between the event ending and take-off
+const stampOf = (date, time, dflt) => Math.round(parseISO(date).getTime()/60000) + (toMin(time) ?? toMin(dflt));
+function attendance(e, name){
+  const fl = flights.filter(f=>f.name===name);
+  const outs = fl.filter(f=>f.direction==='Outbound' && f.arriveDate);
+  const rets = fl.filter(f=>f.direction==='Return' && f.departDate);
+  const start = stampOf(e.date, e.start, '18:00');
+  let end = e.end ? stampOf(e.date, e.end, '23:00') : start + 180;
+  if (e.end && end <= start) end += 1440;
+  let reason = '';
+  if (outs.length){                                   // last Outbound leg = when they actually arrive
+    const last = outs.reduce((a,b)=>stampOf(a.arriveDate,a.arriveTime,'12:00') >= stampOf(b.arriveDate,b.arriveTime,'12:00') ? a : b);
+    if (stampOf(last.arriveDate, last.arriveTime, '12:00') + EVE_ARRIVE_BUFFER > start) reason = `lands ${fmtDate(last.arriveDate)}${last.arriveTime ? ' ' + last.arriveTime : ''}`;
+  }
+  if (!reason && rets.length){                         // first Return leg = when they leave
+    const first = rets.reduce((a,b)=>stampOf(a.departDate,a.departTime,'12:00') <= stampOf(b.departDate,b.departTime,'12:00') ? a : b);
+    if (stampOf(first.departDate, first.departTime, '12:00') < end + EVE_DEPART_BUFFER) reason = `flies ${fmtDate(first.departDate)}${first.departTime ? ' ' + first.departTime : ''}`;
+  }
+  if (reason) return { status:'no', reason };
+  return { status: (outs.length && rets.length) ? 'yes' : 'unknown', reason:'' };
+}
+function eveningAttendees(e){
+  const out = { yes:[], no:[], unknown:[] };
+  getAllNames().filter(n=>appliesTo(e,n)).forEach(n=>{ const a = attendance(e,n); (out[a.status]).push({ name:n, reason:a.reason }); });
+  return out;
+}
+
 function renderEvenings(){
   const list = $('eveningList'); if (!list) return;
   const evs = [...(EVENT.evenings||[])].sort((a,b)=>(a.date+(a.start||'')).localeCompare(b.date+(b.start||'')));
@@ -530,7 +567,10 @@ function renderEvenings(){
   $('eveningMe').innerHTML = me ? `<div class="notice info" style="margin:0 22px 4px;">Showing what applies to <b>${escapeHtml(me)}</b>. Events not for you are faded.</div>` : '';
   if (!evs.length){ list.innerHTML = `<div class="empty-note" style="padding:8px 0;">No evening events added yet.</div>`; return; }
   list.innerHTML = evs.map(e=>{
-    const d = parseISO(e.date), mine = me ? appliesTo(e, me) : true;
+    const d = parseISO(e.date);
+    const att = flights.length ? eveningAttendees(e) : null;
+    const myAtt = me && appliesTo(e, me) ? attendance(e, me) : null;
+    const mine = me ? (appliesTo(e, me) && !(myAtt && myAtt.status==='no')) : true;
     const when = e.start ? `${escapeHtml(e.start)}${e.end ? '&ndash;'+escapeHtml(e.end) : ''}` : 'Time TBC';
     const place = [e.venue, e.address].filter(Boolean).join(', ');
     const aud = (e.audience||'Everyone') === 'Invited only' && (e.invited||'').trim()
@@ -538,11 +578,17 @@ function renderEvenings(){
     return `<article class="evening-card${mine ? '' : ' dim'}">
       <div class="ev-date"><div class="dow">${DOW[d.getUTCDay()]}</div><div class="num">${d.getUTCDate()}</div><div class="mon">${MONTH[d.getUTCMonth()]}</div></div>
       <div class="ev-main">
-        <div class="ev-top"><h3>${escapeHtml(e.title)}</h3>${e.kind ? `<span class="badge ${KIND_CLASS[e.kind]||'off'}">${escapeHtml(e.kind)}</span>` : ''}${me && mine ? '<span class="badge build">You</span>' : ''}</div>
+        <div class="ev-top"><h3>${escapeHtml(e.title)}</h3>${e.kind ? `<span class="badge ${KIND_CLASS[e.kind]||'off'}">${escapeHtml(e.kind)}</span>` : ''}${me && mine ? '<span class="badge build">You</span>' : ''}${me && myAtt && myAtt.status==='no' ? `<span class="badge off">Away &middot; ${escapeHtml(myAtt.reason)}</span>` : ''}</div>
         <div class="ev-line"><b>${when}</b>${e.host ? ` &middot; Hosted by ${escapeHtml(e.host)}` : ''}</div>
         ${place ? `<div class="ev-line">${svg('pin',14)} <a href="${mapLink(place)}" target="_blank" rel="noopener">${escapeHtml(place)}</a></div>` : ''}
         <div class="ev-line ev-soft">For: ${aud}${e.dress ? ` &middot; Dress: ${escapeHtml(e.dress)}` : ''}</div>
         ${e.notes ? `<div class="ev-notes">${escapeHtml(e.notes)}</div>` : ''}
+        ${att && (att.yes.length + att.no.length + att.unknown.length) ? `<details class="ev-attend"><summary><b>${att.yes.length}</b> can attend${att.no.length ? ` &middot; <span class="away">${att.no.length} can&rsquo;t</span>` : ''}${att.unknown.length ? ` &middot; ${att.unknown.length} no flight info` : ''}</summary>
+          <div class="ev-att-list">
+            ${att.no.length ? `<div><b>Can&rsquo;t attend (flights):</b> ${att.no.map(x=>`${escapeHtml(x.name)} <span class="ev-soft">(${escapeHtml(x.reason)})</span>`).join(', ')}</div>` : ''}
+            ${att.yes.length ? `<div><b>Can attend:</b> ${att.yes.map(x=>escapeHtml(x.name)).join(', ')}</div>` : ''}
+            ${att.unknown.length ? `<div><b>No/partial flight info:</b> ${att.unknown.map(x=>escapeHtml(x.name)).join(', ')}</div>` : ''}
+          </div></details>` : ''}
         <div class="ev-actions">
           <button class="btn" type="button" data-ics="${escapeHtml(String(e.id))}">${svg('cal',14)} Add to calendar</button>
           ${e.link ? `<a class="btn" href="${escapeHtml(e.link)}" target="_blank" rel="noopener">More info</a>` : ''}
