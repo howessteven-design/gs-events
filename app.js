@@ -6,7 +6,7 @@ const TYPE_CLASS = { 'Sales':'sales', 'Support':'support', 'Build':'build', 'Vis
 const ACC_CLASS = { 'Hotel Booked':'acc-booked', 'Alternative Accommodation':'acc-alt', 'TBC':'acc-tbc' };
 const ACC_LABEL = { 'Hotel Booked':'Hotel booked', 'Alternative Accommodation':'Alternative accommodation', 'TBC':'TBC' };
 const STATUS_CLASS = { 'Open':'status-open', 'In Progress':'status-progress', 'Done':'status-done', 'Confirmed':'status-done', 'Needs content':'status-progress', 'TBC':'status-open', 'To order':'status-open', 'Ordered':'status-progress', 'On stand':'status-done' };
-const TAB_LABEL = { rota:'Staff rota', accom:'Accommodation', flights:'Flights', people:'Staff', info:'Show info', mkt:'MKT Only' };
+const TAB_LABEL = { rota:'Staff rota', evenings:'Evenings', accom:'Accommodation', flights:'Flights', people:'Staff', info:'Show info', mkt:'MKT Only' };
 const DOW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const MONTH = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sept','Oct','Nov','Dec'];
 
@@ -15,6 +15,9 @@ let shifts = [], accom = [], flights = [], actions = [], links = [];
 let EVENT_DAYS = [];
 let activeTab = 'rota';
 let activeDay = null;
+const lsGet = k => { try { return localStorage.getItem(k) || ''; } catch(e){ return ''; } };
+const lsSet = (k,v) => { try { localStorage.setItem(k,v); } catch(e){} };
+let ME = lsGet('gs_me');          // 'Show only me' choice, remembered on this device
 const EDIT = new URLSearchParams(location.search).has('admin');   // ?admin=1 shows the edit tools
 const DIR_CLASS = { 'Outbound':'build', 'Return':'both', 'Other':'off' };
 
@@ -60,7 +63,10 @@ const ICON = {
   hotel: '<path d="M3 20V8l9-5 9 5v12M9 20v-6h6v6"/>',
   alt:   '<path d="M4 11l8-7 8 7M6 10v10h12V10"/>',
   tbc:   '<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17v.01"/>',
-  go:    '<path d="M7 17L17 7M8 7h9v9"/>'
+  go:    '<path d="M7 17L17 7M8 7h9v9"/>',
+  evenings:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
+  cal:   '<path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM12 14v4M10 16h4"/>',
+  pin:   '<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>'
 };
 const svg = (name, size=18) => `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[name]}</svg>`;
 function metric(label, value, icon, tone){
@@ -133,15 +139,20 @@ function recomputeDays(){
   });
 }
 
+function tabsFor(ev){
+  const t = [...(ev.tabs || ['rota','accom','people','info','mkt'])];
+  if ((ev.evenings||[]).length && !t.includes('evenings')) t.splice(Math.min(1, t.length), 0, 'evenings');   // evenings never get hidden once added
+  return t;
+}
 function loadEvent(id){
   EVENT = getEvents().find(e=>e.id===id);
   // arrays live on the event object itself, so edits (admin mode) survive switching events
-  ['shifts','accom','flights','actions','links','info','days','people'].forEach(k=>{ EVENT[k] = EVENT[k] || []; });
+  ['shifts','accom','flights','actions','links','info','days','people','evenings'].forEach(k=>{ EVENT[k] = EVENT[k] || []; });
   shifts = EVENT.shifts; accom = EVENT.accom; flights = EVENT.flights; actions = EVENT.actions; links = EVENT.links;
   activeDay = null;
   document.title = `${EVENT.title} | Greenspan Events HQ`;
   renderTabs();
-  const tabs = EVENT.tabs || ['rota','accom','people','info','mkt'];
+  const tabs = tabsFor(EVENT);
   switchTab(tabs.includes(activeTab) ? activeTab : tabs[0]);
   renderAll();
 }
@@ -149,7 +160,7 @@ function loadEvent(id){
 function renderAll(){
   recomputeDays();
   renderHeader(); render(); renderAccom(); renderFlights(); renderPeopleNotice();
-  renderActions(); renderInfo(); renderLinks(); renderExpenses();
+  renderActions(); renderInfo(); renderLinks(); renderExpenses(); renderEvenings();
   if (activeTab==='people') renderPeople();
   syncEditUI();
 }
@@ -187,7 +198,7 @@ function renderHeader(){
 }
 
 function renderTabs(){
-  const tabs = EVENT.tabs || ['rota','accom','people','info','mkt'];
+  const tabs = tabsFor(EVENT);
   const el = $('tabs');
   el.innerHTML = tabs.map(t=>`<button class="tab-btn" role="tab" data-tab="${t}">${svg(t,16)}${TAB_LABEL[t]}</button>`).join('');
   el.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click', ()=>switchTab(b.getAttribute('data-tab'))));
@@ -196,13 +207,55 @@ function renderTabs(){
 function switchTab(tab){
   activeTab = tab;
   document.querySelectorAll('#tabs .tab-btn').forEach(b=>{ const on = b.getAttribute('data-tab')===tab; b.classList.toggle('active', on); b.setAttribute('aria-selected', on); });
-  ['rota','accom','flights','people','info','mkt'].forEach(t=>{ $(t+'View').style.display = t===tab ? '' : 'none'; });
+  ['rota','evenings','accom','flights','people','info','mkt'].forEach(t=>{ $(t+'View').style.display = t===tab ? '' : 'none'; });
   if (tab==='people') renderPeople();
+  if (tab==='evenings') renderEvenings();
 }
 
 /* ---------- rota ---------- */
+/* Flights next to the stand: show landing / take-off times on cover days and flag tight connections */
+const ARRIVE_BUFFER = 60;    // minutes needed between landing and the stand starting (airport -> venue)
+const DEPART_BUFFER = 150;   // minutes needed between the stand ending and take-off (venue -> airport + security)
+const toMin = t => { const m = /^(\d{1,2}):(\d{2})/.exec(t||''); return m ? (+m[1])*60 + (+m[2]) : null; };
+function travelFor(s){
+  if (!s || s.activity !== 'On Stand') return null;
+  const bits = [], warn = [];
+  flights.filter(f=>f.name===s.name).forEach(f=>{
+    const dir = f.direction || '';
+    if (dir !== 'Return' && f.arriveDate===s.date && f.arriveTime){
+      bits.push(`lands ${f.arriveTime}${f.to ? ' ' + f.to : ''}`);
+      const a = toMin(f.arriveTime), st = toMin(s.start);
+      if (a!=null && st!=null && a + ARRIVE_BUFFER > st) warn.push(`lands ${f.arriveTime}, stand starts ${s.start}`);
+    }
+    if (dir !== 'Outbound' && f.departDate===s.date && f.departTime){
+      bits.push(`flies ${f.departTime}${f.from ? ' ' + f.from : ''}`);
+      const d = toMin(f.departTime), en = toMin(s.end);
+      if (d!=null && en!=null && d - DEPART_BUFFER < en) warn.push(`flies ${f.departTime}, stand ends ${s.end}`);
+    }
+  });
+  return bits.length ? { text:bits.join(' \u00b7 '), warn } : null;
+}
+const travelHTML = s => { const t = travelFor(s); return t ? ` <span class="trav${t.warn.length ? ' warn' : ''}" title="${escapeHtml(t.warn.join('; '))}">${escapeHtml(t.text)}</span>${t.warn.length ? ' <span class="badge custfacing">Check</span>' : ''}` : ''; };
+
+/* Default stand cover: Sales + Support are on the stand for show hours unless they have a shift of their own that day */
+function standCoverDays(){ const sc = EVENT.standCover; return (sc && Array.isArray(sc.days)) ? sc.days : []; }
+function effectiveShifts(){
+  const days = standCoverDays(); if (!days.length) return shifts;
+  const types = (EVENT.standCover.types && EVENT.standCover.types.length) ? EVENT.standCover.types : ['Sales','Support'];
+  const byDate = {}; days.forEach(d=>{ byDate[d.date] = d; });
+  // an "On Stand" shift with no times of its own simply means "default hours"
+  const out = shifts.map(s=>{ const d = byDate[s.date]; return (d && s.activity==='On Stand' && !s.start && !s.end) ? { ...s, start:d.start, end:d.end, defaulted:true } : s; });
+  getAllNames().filter(n=>personTypes(n).some(t=>types.includes(t))).forEach(n=>{
+    days.forEach(d=>{
+      const own = shifts.some(s=>s.name===n && s.date===d.date && !/evening|network|social|dinner|party|travel|flight/i.test(s.activity||''));
+      if (!own) out.push({ id:'v:'+n+':'+d.date, name:n, date:d.date, activity:'On Stand', start:d.start, end:d.end, virtual:true });
+    });
+  });
+  return out;
+}
+function meName(){ return (ME && getAllNames().includes(ME)) ? ME : ''; }
 function computeDayCounts(iso){
-  const rows = shifts.filter(s=>s.date===iso && s.activity !== 'Off');
+  const rows = effectiveShifts().filter(s=>s.date===iso && s.activity !== 'Off');
   return { total: rows.length };
 }
 
@@ -239,35 +292,91 @@ function renderSummary(){
     metric('Visitor', count('Visitor'), 'visitor', 'blue');
 }
 
-function renderTable(){
-  const title = $('tableTitle'), countEl = $('tableCount');
-  let rows = [...shifts];
-  if (activeDay){
-    title.textContent = `Roster - ${fmtDate(activeDay)}`;
-    rows = rows.filter(s=>s.date===activeDay && s.activity !== 'Off');
-  } else { title.textContent = 'All staff movements'; }
-  rows.sort((a,b)=> a.date===b.date ? a.name.localeCompare(b.name) : a.date.localeCompare(b.date));
-  countEl.textContent = rows.length ? `${rows.length} shift${rows.length===1?'':'s'}` : '';
-  const body = $('rotaBody');
-  if (!rows.length){
-    body.innerHTML = `<tr class="empty"><td colspan="6">No shifts ${activeDay ? 'on this day' : 'yet'}.</td></tr>`;
-    return;
-  }
-  body.innerHTML = rows.map(s=>`
-    <tr>
+function shiftRow(s, cls){
+  const virt = !!s.virtual;
+  return `
+    <tr class="${cls||''}${virt ? ' virtual' : ''}">
       <td data-label="Name"><button class="person-link" data-person="${escapeHtml(s.name)}">${escapeHtml(s.name)}</button></td>
       <td data-label="Type">${typeBadges(s.name, s.activity==='Off')}</td>
       <td data-label="Date">${fmtDate(s.date)}</td>
       <td data-label="Activity">${escapeHtml(s.activity)}</td>
       <td data-label="Time">${timeRange(s)}</td>
-      <td data-label="Notes">${escapeHtml(s.notes||'')}</td>${rowActions('shifts', s.id)}
-    </tr>`).join('');
+      <td data-label="Notes">${escapeHtml(s.notes || (virt ? 'Default stand cover' : ''))}${travelHTML(s)}</td>${virt ? (EDIT ? '<td class="row-actions" data-label=""></td>' : '') : rowActions('shifts', s.id)}
+    </tr>`;
+}
+function renderTable(){
+  const title = $('tableTitle'), countEl = $('tableCount');
+  const me = meName();
+  const all = effectiveShifts();
+  let rows = [...all];
+  if (me){ rows = rows.filter(s=>s.name===me); title.textContent = `My schedule - ${me}`; }
+  else if (activeDay) title.textContent = `Roster - ${fmtDate(activeDay)}`;
+  else title.textContent = 'All staff movements';
+  if (activeDay) rows = rows.filter(s=>s.date===activeDay);
+  if (activeDay && !me) rows = rows.filter(s=>s.activity !== 'Off');
+  rows.sort((a,b)=> a.date===b.date ? (a.virtual===b.virtual ? a.name.localeCompare(b.name) : (a.virtual ? -1 : 1)) : a.date.localeCompare(b.date));
+  const group = !me && !activeDay && rows.some(s=>s.virtual || s.defaulted);      // overview: one line per day for the default cover
+  const body = $('rotaBody');
+  let html = '', shown = 0;
+  if (group){
+    const byDate = {};
+    rows.filter(s=>s.virtual || s.defaulted).forEach(s=>{ (byDate[s.date] = byDate[s.date] || []).push(s); });
+    const real = rows.filter(s=>!s.virtual && !s.defaulted);
+    const dates = [...new Set([...Object.keys(byDate), ...real.map(s=>s.date)])].sort();
+    dates.forEach(d=>{
+      const v = byDate[d];
+      if (v){
+        v.sort((a,b)=>a.name.localeCompare(b.name));
+        const names = v.map(s=>`<button class="person-link" data-person="${escapeHtml(s.name)}">${escapeHtml(s.name)}</button>${travelHTML(s)}`).join(', ');
+        const checks = v.filter(s=>{ const t = travelFor(s); return t && t.warn.length; }).length;
+        html += `<tr class="cover-row"><td data-label="Name"><b>Stand cover</b><div class="cover-names">${names}</div></td>
+          <td data-label="Type"><span class="badge sales">Sales</span> <span class="badge support">Support</span></td>
+          <td data-label="Date">${fmtDate(d)}</td><td data-label="Activity">On Stand</td><td data-label="Time">${timeRange(v[0])}</td>
+          <td data-label="Notes">${v.length} people &middot; default cover${checks ? ` &middot; <span class="badge custfacing">${checks} to check</span>` : ''}</td>${EDIT ? '<td class="row-actions" data-label=""></td>' : ''}</tr>`;
+        shown++;
+      }
+      real.filter(s=>s.date===d).forEach(s=>{ html += shiftRow(s); shown++; });
+    });
+    countEl.textContent = `${real.length} listed shift${real.length===1?'':'s'} + default cover`;
+  } else {
+    rows.forEach(s=>{ html += shiftRow(s); shown++; });
+    countEl.textContent = rows.length ? `${rows.length} shift${rows.length===1?'':'s'}` : '';
+  }
+  if (!shown){
+    body.innerHTML = `<tr class="empty"><td colspan="6">${me ? 'Nothing scheduled for you yet.' : `No shifts ${activeDay ? 'on this day' : 'yet'}.`}</td></tr>`;
+    return;
+  }
+  body.innerHTML = html;
   bindPeople(body);
+}
+
+/* ---------- view-as / cover note / evening strip (rota tab) ---------- */
+function renderMe(){
+  const el = $('meRow'), names = getAllNames();
+  if (!names.length){ el.innerHTML = ''; return; }
+  const me = meName();
+  el.innerHTML = `<label for="meSelect">Show</label><select id="meSelect"><option value="">Everyone</option>${names.map(n=>`<option value="${escapeHtml(n)}" ${n===me?'selected':''}>${escapeHtml(n)}</option>`).join('')}</select>${me ? '<span class="me-hint">Just your schedule &middot; remembered on this device</span>' : ''}`;
+  $('meSelect').addEventListener('change', e=>{ ME = e.target.value; lsSet('gs_me', ME); render(); renderEvenings(); });
+}
+function renderCoverNote(){
+  const days = standCoverDays(), el = $('coverNote');
+  if (!days.length){ el.innerHTML = ''; return; }
+  const groups = {};
+  days.forEach(d=>{ const k = `${d.start}&ndash;${d.end}`; (groups[k] = groups[k] || []).push(d.date); });
+  const parts = Object.entries(groups).map(([k,ds])=>`${ds.map(fmtDate).join(', ')}: <b>${k}</b>`).join(' &middot; ');
+  const types = ((EVENT.standCover.types && EVENT.standCover.types.length) ? EVENT.standCover.types : ['Sales','Support']).join(' and ');
+  el.innerHTML = `<div class="notice info"><b>Stand cover</b> &ndash; ${types} are on the stand by default: ${parts}. Cover lunch and breaks between you. Only changes to this (half days, days off, late starts) are listed below &ndash; tap a day to see everyone, or pick your name to see just yours.</div>`;
+}
+function renderEveningStrip(){
+  const el = $('eveningStrip'), all = [...(EVENT.evenings||[])];
+  if (!all.length){ el.innerHTML = ''; return; }
+  const list = all.filter(e=>!activeDay || e.date===activeDay).sort((a,b)=>(a.date+(a.start||'')).localeCompare(b.date+(b.start||'')));
+  el.innerHTML = `<div class="evening-strip"><span class="es-label">${svg('evenings',14)} Evenings</span>${list.map(e=>`<button type="button" class="es-chip" data-goto-evenings="1"><b>${fmtDate(e.date)}</b> ${escapeHtml(e.title)}${e.start ? ` &middot; ${escapeHtml(e.start)}` : ''}</button>`).join('') || '<span class="es-none">No evening event on this day</span>'}</div>`;
 }
 
 function render(){
   $('accessNotice').innerHTML = EVENT.accessNotice ? `<div class="notice warn">${EVENT.accessNotice}</div>` : '';
-  renderDaystrip(); renderSummary(); renderTable();
+  renderMe(); renderDaystrip(); renderEveningStrip(); renderCoverNote(); renderSummary(); renderTable();
 }
 
 /* ---------- accommodation ---------- */
@@ -333,7 +442,7 @@ function getAllNames(){
   return [...new Set([...shifts.map(s=>s.name), ...accom.map(a=>a.name), ...flights.map(f=>f.name), ...(EVENT.people||[]).map(p=>p.name)])].sort((a,b)=>a.localeCompare(b));
 }
 function daysOnSite(name){
-  return new Set(shifts.filter(s=>s.name===name && s.activity!=='Off').map(s=>s.date)).size;
+  return new Set(effectiveShifts().filter(s=>s.name===name && s.activity!=='Off').map(s=>s.date)).size;
 }
 function renderPeopleNotice(){
   $('peopleNotice').innerHTML = EVENT.peopleNotice ? `<div class="notice info">${EVENT.peopleNotice}</div>` : '';
@@ -366,12 +475,14 @@ function renderPeople(){
 function openPersonModal(name){
   $('personModalTitle').textContent = name;
   $('personTags').innerHTML = (personTypes(name).map(t=>`<span class="badge ${TYPE_CLASS[t]}">${t}</span>`).join('') || '<span class="empty-note">No staff type set</span>') + (() => { const f = flightStatus(name); return ` <span class="badge ${f.cls}">${f.label}</span>`; })();
-  const mine = shifts.filter(s=>s.name===name).sort((a,b)=>a.date.localeCompare(b.date));
+  const mine = effectiveShifts().filter(s=>s.name===name).map(s=>({ date:s.date, sort:s.start||'', label:s.activity, note:[s.notes || (s.virtual ? 'Default stand cover' : ''), (()=>{ const t = travelFor(s); return t ? t.text + (t.warn.length ? ' (check timing)' : '') : ''; })()].filter(Boolean).join(' \u00b7 '), time:timeRange(s) }));
+  (EVENT.evenings||[]).filter(e=>appliesTo(e,name)).forEach(e=>mine.push({ date:e.date, sort:e.start||'99', label:'Evening: '+e.title, note:e.venue||'', time:e.start ? `${e.start}${e.end ? '&ndash;'+e.end : ''}` : '' }));
+  mine.sort((a,b)=>(a.date+a.sort).localeCompare(b.date+b.sort));
   $('personSchedule').innerHTML = !mine.length ? `<div class="empty-note">No shifts recorded yet.</div>` : mine.map(s=>`
     <div class="schedule-row">
       <div class="sr-date">${fmtDate(s.date)}</div>
-      <div class="sr-mid">${escapeHtml(s.activity)}${s.notes ? ` &middot; ${escapeHtml(s.notes)}` : ''}</div>
-      <div class="sr-time">${timeRange(s)}</div>
+      <div class="sr-mid">${escapeHtml(s.label)}${s.note ? ` &middot; ${escapeHtml(s.note)}` : ''}</div>
+      <div class="sr-time">${s.time}</div>
     </div>`).join('');
   const myAcc = accom.filter(a=>a.name===name);
   $('personAccom').innerHTML = !myAcc.length ? `<div class="empty-note">No accommodation entry yet.</div>` : myAcc.map(a=>`
@@ -401,6 +512,74 @@ function openPersonModal(name){
   if (window.onPersonModal) window.onPersonModal(name);
 }
 function closePersonModal(){ $('personModalBackdrop').classList.remove('show'); }
+
+/* ---------- evenings ---------- */
+const KIND_CLASS = { 'Internal':'build', 'Industry':'both', 'GS sponsored':'custfacing' };
+function appliesTo(e, name){
+  const a = e.audience || 'Everyone';
+  if (a === 'Everyone') return true;
+  if (a === 'Sales & Support') return personTypes(name).some(t=>t==='Sales' || t==='Support');
+  const list = (e.invited||'').split(/[\n,]/).map(x=>x.trim().toLowerCase()).filter(Boolean);
+  return list.includes(String(name).toLowerCase());
+}
+function renderEvenings(){
+  const list = $('eveningList'); if (!list) return;
+  const evs = [...(EVENT.evenings||[])].sort((a,b)=>(a.date+(a.start||'')).localeCompare(b.date+(b.start||'')));
+  const me = meName();
+  $('eveningCount').textContent = evs.length ? `${evs.length} event${evs.length===1?'':'s'}` : '';
+  $('eveningMe').innerHTML = me ? `<div class="notice info" style="margin:0 22px 4px;">Showing what applies to <b>${escapeHtml(me)}</b>. Events not for you are faded.</div>` : '';
+  if (!evs.length){ list.innerHTML = `<div class="empty-note" style="padding:8px 0;">No evening events added yet.</div>`; return; }
+  list.innerHTML = evs.map(e=>{
+    const d = parseISO(e.date), mine = me ? appliesTo(e, me) : true;
+    const when = e.start ? `${escapeHtml(e.start)}${e.end ? '&ndash;'+escapeHtml(e.end) : ''}` : 'Time TBC';
+    const place = [e.venue, e.address].filter(Boolean).join(', ');
+    const aud = (e.audience||'Everyone') === 'Invited only' && (e.invited||'').trim()
+      ? `Invited: ${escapeHtml((e.invited||'').split(/[\n,]/).map(x=>x.trim()).filter(Boolean).join(', '))}` : escapeHtml(e.audience || 'Everyone');
+    return `<article class="evening-card${mine ? '' : ' dim'}">
+      <div class="ev-date"><div class="dow">${DOW[d.getUTCDay()]}</div><div class="num">${d.getUTCDate()}</div><div class="mon">${MONTH[d.getUTCMonth()]}</div></div>
+      <div class="ev-main">
+        <div class="ev-top"><h3>${escapeHtml(e.title)}</h3>${e.kind ? `<span class="badge ${KIND_CLASS[e.kind]||'off'}">${escapeHtml(e.kind)}</span>` : ''}${me && mine ? '<span class="badge build">You</span>' : ''}</div>
+        <div class="ev-line"><b>${when}</b>${e.host ? ` &middot; Hosted by ${escapeHtml(e.host)}` : ''}</div>
+        ${place ? `<div class="ev-line">${svg('pin',14)} <a href="${mapLink(place)}" target="_blank" rel="noopener">${escapeHtml(place)}</a></div>` : ''}
+        <div class="ev-line ev-soft">For: ${aud}${e.dress ? ` &middot; Dress: ${escapeHtml(e.dress)}` : ''}</div>
+        ${e.notes ? `<div class="ev-notes">${escapeHtml(e.notes)}</div>` : ''}
+        <div class="ev-actions">
+          <button class="btn" type="button" data-ics="${escapeHtml(String(e.id))}">${svg('cal',14)} Add to calendar</button>
+          ${e.link ? `<a class="btn" href="${escapeHtml(e.link)}" target="_blank" rel="noopener">More info</a>` : ''}
+          ${EDIT ? `<span class="ev-edit">${rowActions('evenings', e.id).replace(/<\/?td[^>]*>/g,'')}</span>` : ''}
+        </div>
+      </div>
+    </article>`;
+  }).join('');
+}
+function icsEscape(t){ return String(t||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\r?\n/g,'\\n'); }
+function downloadIcs(id){
+  const e = (EVENT.evenings||[]).find(x=>String(x.id)===String(id)); if (!e) return;
+  const ymd = iso => iso.replace(/-/g,''), hm = t => t.replace(':','') + '00';
+  const L = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Greenspan XP//Events HQ//EN','CALSCALE:GREGORIAN','BEGIN:VEVENT',
+    `UID:${e.id}@gs-events.netlify.app`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d+Z$/,'Z')}`];
+  if (e.start){
+    let endDate = e.date, end = e.end;
+    if (!end){ const [h,m] = e.start.split(':').map(Number); end = String((h+2)%24).padStart(2,'0')+':'+String(m).padStart(2,'0'); if (h+2>=24) endDate = new Date(parseISO(e.date).getTime()+86400000).toISOString().slice(0,10); }
+    else if (end <= e.start) endDate = new Date(parseISO(e.date).getTime()+86400000).toISOString().slice(0,10);
+    L.push(`DTSTART:${ymd(e.date)}T${hm(e.start)}`, `DTEND:${ymd(endDate)}T${hm(end)}`);
+  } else {
+    const next = new Date(parseISO(e.date).getTime()+86400000).toISOString().slice(0,10);
+    L.push(`DTSTART;VALUE=DATE:${ymd(e.date)}`, `DTEND;VALUE=DATE:${ymd(next)}`);
+  }
+  L.push(`SUMMARY:${icsEscape(e.title)}`);
+  const loc = [e.venue, e.address].filter(Boolean).join(', '); if (loc) L.push(`LOCATION:${icsEscape(loc)}`);
+  const desc = [e.host && `Hosted by ${e.host}`, e.dress && `Dress: ${e.dress}`, e.notes, e.link].filter(Boolean).join('\n'); if (desc) L.push(`DESCRIPTION:${icsEscape(desc)}`);
+  L.push('END:VEVENT','END:VCALENDAR');
+  const blob = new Blob([L.join('\r\n')+'\r\n'], { type:'text/calendar' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = (e.title||'event').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') + '.ics';
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+}
+document.addEventListener('click', ev=>{
+  const ics = ev.target.closest('[data-ics]'); if (ics){ downloadIcs(ics.dataset.ics); return; }
+  if (ev.target.closest('[data-goto-evenings]')) switchTab('evenings');
+});
 
 /* ---------- show info (config-driven sections) ---------- */
 function renderInfo(){
@@ -523,6 +702,13 @@ function exportExcel(){
     fws['!cols'] = [{wch:22},{wch:11},{wch:9},{wch:16},{wch:10},{wch:8},{wch:8},{wch:12},{wch:11},{wch:12},{wch:11},{wch:16},{wch:30}];
     for (let r=1; r<=fs.length; r++){ [7,9].forEach(c=>{ const cell = fws[XLSX.utils.encode_cell({r, c})]; if (cell) cell.z = 'dd-mmm-yyyy'; }); }
     XLSX.utils.book_append_sheet(wb, fws, 'Flights');
+  }
+  if ((EVENT.evenings||[]).length){
+    const evs = [...EVENT.evenings].sort((a,b)=>(a.date+(a.start||'')).localeCompare(b.date+(b.start||'')));
+    const ews = XLSX.utils.aoa_to_sheet([['Date','Start','End','Event','Type','Venue','Address','Host','For','Dress','Notes'], ...evs.map(e=>[e.date ? new Date(e.date+'T00:00:00') : '', e.start||'', e.end||'', e.title, e.kind||'', e.venue||'', e.address||'', e.host||'', e.audience||'Everyone', e.dress||'', e.notes||''])]);
+    ews['!cols'] = [{wch:12},{wch:8},{wch:8},{wch:30},{wch:14},{wch:24},{wch:30},{wch:20},{wch:16},{wch:16},{wch:40}];
+    for (let r=1; r<=evs.length; r++){ const cell = ews[XLSX.utils.encode_cell({r, c:0})]; if (cell) cell.z = 'dd-mmm-yyyy'; }
+    XLSX.utils.book_append_sheet(wb, ews, 'Evenings');
   }
   const mws = XLSX.utils.aoa_to_sheet([['Category','Task','Status','Notes'], ...actions.map(a=>[a.category||'', a.task, a.status, a.notes||''])]);
   mws['!cols'] = [{wch:18},{wch:70},{wch:12},{wch:30}];

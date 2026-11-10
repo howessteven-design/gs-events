@@ -127,7 +127,10 @@
   </div>
 
   <div id="rotaView">
+    <div class="me-row" id="meRow"></div>
     <div class="daystrip" id="daystrip"></div>
+    <div id="eveningStrip"></div>
+    <div id="coverNote"></div>
     <div class="summary-row" id="summaryRow"></div>
     <div id="accessNotice"></div>
     <div class="legend">
@@ -153,6 +156,17 @@
           <tbody id="rotaBody"></tbody>
         </table>
       </div>
+    </section>
+  </div>
+
+  <div id="eveningsView" style="display:none;">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Evening events</h2>
+        <span class="panel-tools"><span id="eveningCount" class="panel-count"></span><span class="panel-add" data-add="evenings" data-label="Add evening event"></span></span>
+      </div>
+      <div id="eveningMe"></div>
+      <div class="evening-grid" id="eveningList"></div>
     </section>
   </div>
 

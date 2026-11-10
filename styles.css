@@ -359,3 +359,41 @@ button.btn.attn{background:var(--navy); color:#fff; border-color:var(--navy);}
 @media (max-width:720px){ .kv-row{grid-template-columns:1fr; gap:2px;} .kv-v{text-align:left;} }
 td[data-label="Date"], td[data-label="Departs"], td[data-label="Arrives"], td[data-label="Time"]{white-space:nowrap;}
 @media (max-width:720px){ td[data-label="Date"], td[data-label="Departs"], td[data-label="Arrives"], td[data-label="Time"]{white-space:normal;} }
+
+/* ---------- evenings, view-as, default stand cover ---------- */
+.me-row{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:18px 0 4px; font-size:13px; color:var(--ink-soft);}
+.me-row label{font-size:11px; text-transform:uppercase; letter-spacing:.14em; font-weight:700;}
+.me-row select{font:inherit; font-size:14px; font-weight:600; color:var(--ink); background:var(--panel); border:1px solid var(--hairline); border-radius:10px; padding:8px 12px; max-width:100%;}
+.me-hint{font-size:12.5px;}
+.evening-strip{display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:6px 0 16px;}
+.es-label{display:inline-flex; align-items:center; gap:6px; font-size:11px; text-transform:uppercase; letter-spacing:.14em; font-weight:700; color:var(--ink-soft);}
+.es-chip{font:inherit; font-size:13px; color:var(--ink); background:var(--panel); border:1px solid var(--hairline); border-radius:999px; padding:6px 13px; cursor:pointer; box-shadow:var(--shadow);}
+.es-chip:hover{border-color:#7E5CE9;}
+.es-none{font-size:13px; color:var(--ink-soft);}
+tr.virtual td{color:var(--ink-soft);}
+tr.cover-row td{background:var(--info-bg);}
+tr.cover-row:hover td{background:var(--info-bg);}
+.cover-names{margin-top:4px; font-size:13px; line-height:1.6; font-weight:500;}
+.cover-names .person-link{font-weight:600;}
+.evening-grid{display:grid; gap:14px; padding:18px 22px 22px;}
+.evening-card{display:grid; grid-template-columns:68px 1fr; gap:18px; border:1px solid var(--hairline); border-radius:16px; padding:16px 18px; background:var(--panel);}
+.evening-card.dim{opacity:.5;}
+.ev-date{text-align:center; background:var(--panel-2); border-radius:12px; padding:10px 0; align-self:start;}
+.ev-date .dow{font-size:11px; text-transform:uppercase; letter-spacing:.14em; font-weight:700; color:var(--ink-soft);}
+.ev-date .num{font-size:28px; font-weight:800; line-height:1.1; letter-spacing:-.03em;}
+.ev-date .mon{font-size:12px; color:var(--ink-soft); font-weight:600;}
+.ev-top{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px;}
+.ev-top h3{margin:0; font-size:17px; letter-spacing:-.015em;}
+.ev-line{display:flex; align-items:center; gap:6px; flex-wrap:wrap; font-size:14px; line-height:1.6;}
+.ev-line a{color:inherit; text-decoration:underline; text-underline-offset:3px;}
+.ev-soft{color:var(--ink-soft); font-size:13px;}
+.ev-notes{margin-top:8px; font-size:14px; line-height:1.6; color:var(--ink-soft); white-space:pre-line;}
+.ev-actions{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:12px;}
+.ev-actions a.btn{text-decoration:none;}
+.ev-edit{display:inline-flex; gap:6px; margin-left:auto;}
+@media (max-width:720px){ .evening-card{grid-template-columns:56px 1fr; gap:14px; padding:14px;} .evening-grid{padding:14px;} .me-row select{flex:1;} }
+@media print{ .me-row,.es-chip{display:none !important;} }
+
+.trav{font-size:12.5px; font-weight:600; color:var(--ink-soft);}
+.trav.warn{color:var(--custfacing);}
+.cover-names .trav{margin-left:4px;}

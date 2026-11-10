@@ -5,7 +5,7 @@
   if (typeof EDIT === 'undefined' || !EDIT) return;
 
   const ACTIVITIES = ['Build-up','On Stand','Takedown','Evening networking','Off'];
-  const ALL_TABS = ['rota','accom','flights','people','info','mkt'];
+  const ALL_TABS = ['rota','evenings','accom','flights','people','info','mkt'];
   const dirty = new Set();       // event ids with unsaved edits
   const unregistered = new Set(); // brand-new events not yet listed in index.html
 
@@ -54,6 +54,21 @@
       {k:'task', l:'Task', t:'textarea', req:1, rows:3},
       {k:'notes', l:'Notes', t:'text'} ],
       defaults:()=>({ status:'Open' }) },
+    evenings:{ label:'evening event', fields:[
+      {k:'title', l:'Event', t:'text', req:1, ph:'e.g. Blooloop party'},
+      {k:'date', l:'Date', t:'date', req:1, half:1},
+      {k:'kind', l:'Type', t:'select', o:['Internal','Industry','GS sponsored'], half:1},
+      {k:'start', l:'Start time', t:'time', half:1},
+      {k:'end', l:'End time', t:'time', half:1},
+      {k:'venue', l:'Venue', t:'text', half:1},
+      {k:'host', l:'Hosted by', t:'text', half:1},
+      {k:'address', l:'Address (used for the map link)', t:'text'},
+      {k:'audience', l:'Who is it for?', t:'select', o:['Everyone','Sales & Support','Invited only']},
+      {k:'invited', l:'Invited names (only for "Invited only")', t:'textarea', rows:2, hint:'Names exactly as in the Staff tab, separated by commas or new lines'},
+      {k:'dress', l:'Dress code', t:'text', half:1},
+      {k:'link', l:'More info link', t:'text', half:1, ph:'https://...'},
+      {k:'notes', l:'Notes', t:'textarea', rows:3} ],
+      defaults:()=>({ kind:'Industry', audience:'Everyone' }) },
     links:{ label:'link', fields:[
       {k:'label', l:'Label', t:'text', req:1},
       {k:'url', l:'URL', t:'text', ph:'https://...  (leave blank if not available yet)'},
@@ -89,6 +104,12 @@
       get:o=>(o.days||[]).map(d=>`${d.date}, ${d.phase}`).join('\n'),
       set:(o,v)=>{ o.days = v.split('\n').map(x=>x.trim()).filter(Boolean).map(x=>{ const i=x.indexOf(','); return {date:x.slice(0,i).trim(), phase:x.slice(i+1).trim()}; }); },
       check:v=>{ for (const x of v.split('\n').map(x=>x.trim()).filter(Boolean)){ if(!/^\d{4}-\d{2}-\d{2},\s*\S/.test(x)) return `Check this line: "${x}" - use YYYY-MM-DD, Phase`; } return ''; } },
+    {k:'standCover', l:'Default stand cover for Sales & Support (one per line: YYYY-MM-DD, HH:MM-HH:MM)', t:'textarea', rows:5,
+      hint:'Everyone with type Sales or Support is on the stand these days and hours unless they have a shift of their own that day. Leave empty to turn off.',
+      get:o=>(o.standCover && o.standCover.days || []).map(d=>`${d.date}, ${d.start}-${d.end}`).join('\n'),
+      set:(o,v)=>{ const days = v.split('\n').map(x=>x.trim()).filter(Boolean).map(x=>{ const m = x.match(/^(\d{4}-\d{2}-\d{2})\s*,\s*(\d{1,2}:\d{2})\s*[-\u2013]\s*(\d{1,2}:\d{2})$/); const pad=t=>t.padStart(5,'0'); return { date:m[1], start:pad(m[2]), end:pad(m[3]) }; });
+                   if (days.length) o.standCover = { types:['Sales','Support'], days }; else delete o.standCover; },
+      check:v=>{ for (const x of v.split('\n').map(x=>x.trim()).filter(Boolean)){ if(!/^\d{4}-\d{2}-\d{2}\s*,\s*\d{1,2}:\d{2}\s*[-\u2013]\s*\d{1,2}:\d{2}$/.test(x)) return `Check this line: "${x}" - use YYYY-MM-DD, 10:00-18:00`; } return ''; } },
     {k:'tabs', l:'Tabs to show', t:'checks', o:ALL_TABS,
       get:o=>o.tabs||ALL_TABS, set:(o,v)=>{ o.tabs = ALL_TABS.filter(t=>v.includes(t)); } },
     {k:'draftNote', l:'Draft banner (clear when the event is final)', t:'textarea', rows:2},
@@ -279,7 +300,7 @@
       if (eventsList().some(e=>e.id===id)) return 'An event with that short code already exists.';
       const ev = { id, label:readField(fields[1]), title:readField(fields[2]),
         subtitle:'', standNumber:'', standUrl:'', draftNote:'<b>Draft</b> &ndash; details still being added.',
-        tabs:[...ALL_TABS], days:[], expenses:null, info:[], shifts:[], accom:[], flights:[], actions:[], links:[] };
+        tabs:[...ALL_TABS], days:[], expenses:null, info:[], shifts:[], accom:[], flights:[], actions:[], links:[], evenings:[] };
       eventsList().push(ev); unregistered.add(id);
       refreshSelect(); $('eventSelect').value = id;
       const url = new URL(location.href); url.searchParams.set('event', id); history.replaceState(null,'',url);

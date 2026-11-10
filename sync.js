@@ -14,8 +14,8 @@
     domains: /@(greenspanltd\.com|gsxp\.com)$/i,             // UX check only - the database enforces it too
     poll: 20000
   };
-  const COLLS = ['shifts','accom','flights','actions','links','people','info'];
-  const META  = ['title','label','eyebrow','subtitle','standNumber','standUrl','days','tabs','draftNote','accessNotice','peopleNotice','expenses'];
+  const COLLS = ['shifts','accom','flights','actions','links','people','info','evenings'];
+  const META  = ['title','label','eyebrow','subtitle','standNumber','standUrl','days','tabs','draftNote','accessNotice','peopleNotice','expenses','standCover'];
   const K_AUTH = 'gs_auth', K_CACHE = 'gs_cache_v1', K_RETURN = 'gs_return';
 
   /* ---------- small helpers ---------- */
