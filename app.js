@@ -589,7 +589,10 @@ function attendance(e, name){
     if (stampOf(first.departDate, first.departTime, '12:00') < end + EVE_DEPART_BUFFER) reason = `flies ${fmtDate(first.departDate)}${first.departTime ? ' ' + first.departTime : ''}`;
   }
   if (reason) return { status:'no', reason };
-  return { status: (outs.length && rets.length) ? 'yes' : 'unknown', reason:'' };
+  // no return flight entered: a "Last travel day" on the person (e.g. travelling on after the show) stands in for it
+  const person = (EVENT.people||[]).find(p=>p.name===name), pseudo = !rets.length && person && person.lastTravelDay;
+  if (pseudo && e.date > pseudo) return { status:'no', reason:`leaves ${fmtDate(pseudo)}` };
+  return { status: (outs.length && (rets.length || pseudo)) ? 'yes' : 'unknown', reason:'' };
 }
 function eveningAttendees(e){
   const out = { yes:[], no:[], unknown:[] };
