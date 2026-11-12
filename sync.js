@@ -344,7 +344,7 @@
     + '.sync-dot{width:7px;height:7px;border-radius:50%;background:#2bb673;flex:none}.sync-dot.off{background:#aab1c0}.sync-dot.busy{background:#f5a524}'
     + '.eb-who{font-size:12.5px;color:var(--ink-soft)}@media print{.sync-status{display:none}}';
   document.head.appendChild(css);
-  setTimeout(start, 0);                         // after app.js and edit.js have run
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 
   window.GSSync = { pull, push, signIn: signInDialog, status: statusLine };
 })();
