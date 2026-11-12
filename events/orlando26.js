@@ -4,12 +4,12 @@
  "label": "IAAPA Expo 2026 – Orlando",
  "title": "IAAPA Orlando HQ",
  "default": true,
- "draftNote": "<b>Draft</b> &ndash; Orlando details are still being added. Greenspan is on stand <b>S5186</b> (30&prime; &times; 40&prime;, Yellow freight target). Show dates and hours are from the IAAPA Exhibitor Welcome Guide (updated 24 Jun 2026); team, flights and hotel are to be confirmed.",
- "subtitle": "IAAPA Expo 2026, Orange County Convention Center (South Building), Orlando &middot; Move-in Thu 12 &ndash; Mon 16 Nov &middot; Show Tue 17 &ndash; Thu 19, 10am&ndash;6pm, Fri 20, 10am&ndash;4pm (exhibitors on the floor from 7:30am) &middot; Move-out from Fri 20 Nov, 4pm",
+ "subtitle": "IAAPA Expo 2026, Orange County Convention Center (South Building), Orlando &middot; Show Tue 17 &ndash; Thu 19, 10am&ndash;6pm, Fri 20, 10am&ndash;4pm (exhibitors on the floor from 7:30am) &middot; Move-out from Fri 20 Nov, 4pm",
  "standNumber": "S5186",
  "standUrl": "https://iaapaexpo26.mapyourshow.com/8_0/exhibitor/exhibitor-details.cfm?exhid=7897",
  "tabs": [
   "rota",
+  "evenings",
   "accom",
   "flights",
   "people",
@@ -56,17 +56,12 @@
   {
    "date": "2026-11-21",
    "phase": "Move-out"
-  },
-  {
-   "date": "2026-11-22",
-   "phase": "Move-out"
-  },
-  {
-   "date": "2026-11-23",
-   "phase": "Move-out"
   }
  ],
- "expenses": null,
+ "expenses": {
+  "symbol": "£",
+  "title": "IAAPA Orlando 2026"
+ },
  "info": [
   {
    "type": "venue",
@@ -97,9 +92,9 @@
    "html": "<p style=\"margin:0 0 16px; color:var(--ink-soft);\">From the IAAPA Exhibitor Welcome Guide (updated 24 Jun 2026). Education runs Mon 16 &ndash; Thu 19 Nov; the show floor is open 17&ndash;20 Nov.</p><h4 class=\"info-h4\" style=\"margin:0 0 10px;\">Show hours</h4><div class=\"kv\"><div class=\"kv-row\"><div class=\"kv-k\">Tue 17 Nov</div><div class=\"kv-v\">10am &ndash; 6pm</div></div><div class=\"kv-row\"><div class=\"kv-k\">Wed 18 Nov</div><div class=\"kv-v\">10am &ndash; 6pm</div></div><div class=\"kv-row\"><div class=\"kv-k\">Thu 19 Nov</div><div class=\"kv-v\">10am &ndash; 6pm</div></div><div class=\"kv-row\"><div class=\"kv-k\">Fri 20 Nov</div><div class=\"kv-v\">10am &ndash; 4pm</div></div></div><p style=\"margin:12px 0 0; color:var(--ink-soft);\">Exhibitors can access the floor from 7:30am on show days. On 17&ndash;19 Nov everyone must be off the show floor by 7pm.</p><h4 class=\"info-h4\" style=\"margin:22px 0 10px;\">Badges &amp; wristbands</h4><ul style=\"margin:0; padding-left:18px; line-height:1.8;\"><li>Exhibitor registration opens <b>12pm Sat 14 Nov</b>; collect exhibitor badges after that.</li><li>Wristbands can be worn for move-in <b>through Sun 15 Nov</b>. They are <b>not valid on Mon 16 Nov</b> &ndash; exhibitor badge needed.</li><li>Companies outside the continental US (or who missed the 2 Oct request) can collect wristbands from <b>Thu 12 Nov</b> at the IAAPA Security Office, <b>Room S211, Level 2, South Building</b>.</li><li>Move-out: anyone helping needs an exhibitor badge or wristband. Non-exhibitors can&rsquo;t be on the floor; giving wristbands to buyers or contractors is a $300 fine.</li><li>Register staff only through Exhibitor Registration in the Exhibitor Resource Center &ndash; not the individual or group links.</li><li>Exhibitor Lounge (complimentary drinks, credentials needed): Room S230A, Level 2, South Building.</li></ul>"
   },
   {
+   "html": "<p style=\"margin:0 0 16px; color:var(--ink-soft);\">Applies to everyone working the stand &ndash; <b style=\"color:var(--ink);\">Sales and Support</b>. We want the team looking consistent and smart in front of visitors.</p><img class=\"info-img\" src=\"assets/dress-code.jpg\" alt=\"Two Greenspan XP team members on the stand in navy polo shirts, light beige trousers and light-coloured trainers\" style=\"max-width:420px;\"><h4 class=\"info-h4\" style=\"margin:22px 0 10px;\">We supply</h4><ul style=\"margin:0; padding-left:18px; line-height:1.8;\"><li>Greenspan XP <b>polo shirt</b> (navy, as in the photo).</li></ul><h4 class=\"info-h4\" style=\"margin:22px 0 10px;\">You bring</h4><ul style=\"margin:0; padding-left:18px; line-height:1.8;\"><li><b>Light-coloured trousers or skirt</b> &ndash; beige, white or similar.</li><li><b>Light-coloured training shoes</b> or similar &ndash; white or pale, comfortable for long days on your feet.</li></ul>",
    "type": "notes",
-   "title": "Stand dress code",
-   "html": "<p style=\"margin:0 0 16px; color:var(--ink-soft);\">Applies to everyone working the stand &ndash; <b style=\"color:var(--ink);\">Sales and Support</b>. We want the team looking consistent and smart in front of visitors.</p><img class=\"info-img\" src=\"assets/orlando/dress-code.jpg\" alt=\"Two Greenspan XP team members on the stand in navy polo shirts, light beige trousers and light-coloured trainers\" style=\"max-width:420px;\"><h4 class=\"info-h4\" style=\"margin:22px 0 10px;\">We supply</h4><ul style=\"margin:0; padding-left:18px; line-height:1.8;\"><li>Greenspan XP <b>polo shirt</b> (navy, as in the photo).</li></ul><h4 class=\"info-h4\" style=\"margin:22px 0 10px;\">You bring</h4><ul style=\"margin:0; padding-left:18px; line-height:1.8;\"><li><b>Light-coloured trousers or skirt</b> &ndash; beige, white or similar.</li><li><b>Light-coloured training shoes</b> or similar &ndash; white or pale, comfortable for long days on your feet.</li></ul>"
+   "title": "Stand dress code"
   },
   {
    "type": "notes",
@@ -143,11 +138,12 @@
   },
   {
    "id": "sh11",
-   "name": "Steven Howes",
+   "end": "16:30",
    "date": "2026-11-11",
-   "activity": "CSI",
-   "start": "08:00",
-   "end": "18:30"
+   "name": "Steven Howes",
+   "notes": "CSI pallet packing",
+   "start": "13:00",
+   "activity": "CSI"
   },
   {
    "id": "sh13",
@@ -534,7 +530,7 @@
    "arriveDate": "2026-11-16",
    "arriveTime": "16:55",
    "ref": "YECSRC",
-   "notes": "Madrid T4S to Orlando Terminal C. Ticketed as Nathaly Rianogomez."
+   "notes": "Madrid T4S to Orlando Terminal C. Ticketed as Nathaly Rianogomez. Not returning with the team - travelling on personally after the show."
   },
   {
    "id": "fl_rodo",
@@ -597,6 +593,95 @@
    "arriveDate": "2026-11-19",
    "arriveTime": "17:28",
    "ref": "FPDXTY"
+  },
+  {
+   "id": "r3mry3fo9",
+   "to": "MCO",
+   "from": "CMH",
+   "name": "Brook Tuffin",
+   "status": "Booked",
+   "airline": "Southwest",
+   "flightNo": "WN1784",
+   "direction": "Outbound",
+   "arriveDate": "2026-11-17",
+   "arriveTime": "09:35",
+   "departDate": "2026-11-17",
+   "departTime": "07:10"
+  },
+  {
+   "id": "r65ah8nwj",
+   "to": "CMH",
+   "from": "MCO",
+   "name": "Brook Tuffin",
+   "status": "Booked",
+   "airline": "Southwest",
+   "flightNo": "WN2929",
+   "direction": "Return",
+   "arriveDate": "2026-11-20",
+   "arriveTime": "18:10",
+   "departDate": "2026-11-20",
+   "departTime": "15:40"
+  },
+  {
+   "id": "rexvnnwsg",
+   "to": "MCO",
+   "ref": "JN8D39",
+   "from": "CLT",
+   "name": "Jay Fisher",
+   "notes": "0014869402859",
+   "status": "Booked",
+   "airline": "American Airlines",
+   "flightNo": "AA691",
+   "direction": "Outbound",
+   "arriveDate": "2026-11-18",
+   "arriveTime": "10:11",
+   "departDate": "2026-11-18",
+   "departTime": "08:25"
+  },
+  {
+   "id": "rs0zlqthq",
+   "to": "CLT",
+   "ref": "KTTWFZ",
+   "from": "MCO",
+   "name": "Jay Fisher",
+   "status": "Booked",
+   "airline": "American Airlines",
+   "flightNo": "AA3034",
+   "direction": "Return",
+   "arriveDate": "2026-11-19",
+   "arriveTime": "21:19",
+   "departDate": "2026-11-19",
+   "departTime": "19:26"
+  },
+  {
+   "id": "fl_charo",
+   "name": "Charlie Edwards",
+   "direction": "Outbound",
+   "status": "Booked",
+   "departDate": "2026-11-16",
+   "airline": "American Airlines",
+   "flightNo": "AA7012",
+   "from": "London Gatwick (South Terminal)",
+   "to": "Orlando Terminal C",
+   "departTime": "11:15",
+   "arriveDate": "2026-11-16",
+   "arriveTime": "16:10",
+   "notes": "Same flights as Rod and Guy Morton. Booking ref to add."
+  },
+  {
+   "id": "fl_charr",
+   "name": "Charlie Edwards",
+   "direction": "Return",
+   "status": "Booked",
+   "departDate": "2026-11-19",
+   "airline": "American Airlines",
+   "flightNo": "AA1608",
+   "from": "Orlando (Terminal B)",
+   "to": "Miami",
+   "departTime": "16:14",
+   "arriveDate": "2026-11-19",
+   "arriveTime": "17:28",
+   "notes": "Same flights as Rod and Guy Morton. Booking ref to add."
   }
  ],
  "accom": [
@@ -727,6 +812,14 @@
    "checkin": "2026-11-16",
    "checkout": "2026-11-19",
    "ref": "4153948"
+  },
+  {
+   "id": "rhl43p2t0",
+   "name": "Brook Tuffin",
+   "type": "Hotel Booked",
+   "hotel": "JW Marriott",
+   "checkin": "2026-11-17",
+   "checkout": "2026-11-20"
   }
  ],
  "actions": [],
@@ -804,7 +897,8 @@
    "name": "Nathaly Riano-Gomez",
    "types": [
     "Sales"
-   ]
+   ],
+   "lastTravelDay": "2026-11-21"
   },
   {
    "id": "pjayfisher",
@@ -833,6 +927,90 @@
    "types": [
     "Visitor"
    ]
+  }
+ ],
+ "standCover": {
+  "days": [
+   {
+    "end": "18:00",
+    "date": "2026-11-17",
+    "start": "10:00"
+   },
+   {
+    "end": "18:00",
+    "date": "2026-11-18",
+    "start": "10:00"
+   },
+   {
+    "end": "18:00",
+    "date": "2026-11-19",
+    "start": "10:00"
+   },
+   {
+    "end": "16:00",
+    "date": "2026-11-20",
+    "start": "10:00"
+   }
+  ],
+  "types": [
+   "Sales",
+   "Support"
+  ]
+ },
+ "evenings": [
+  {
+   "id": "rqrobg63p",
+   "end": "22:00",
+   "date": "2026-11-17",
+   "host": "Blooloop",
+   "kind": "Industry",
+   "dress": "Casual",
+   "start": "19:00",
+   "title": "Blooloop",
+   "venue": "Sports & Social Bar, Pointe",
+   "address": "Pointe Orlando (9101 International Dr #2230, Orlando, FL)",
+   "audience": "Everyone"
+  },
+  {
+   "id": "rk99470ir",
+   "end": "22:35",
+   "date": "2026-11-18",
+   "host": "SLT",
+   "kind": "Internal",
+   "link": "https://popstroke.com/venues/winter-garden-hamlin/",
+   "dress": "Dress for golf",
+   "notes": "Pick up from the hotel/s. Venue booked 8 - 10pm. Food included",
+   "start": "19:20",
+   "title": "PopStroke",
+   "venue": "PopStroke Winter Gardens",
+   "address": "PopStroke Hamlin - Winter Garden | 5487 Hamlin Groves Trail, Winter Garden Florida",
+   "audience": "Everyone"
+  },
+  {
+   "id": "preshow-prep",
+   "title": "Pre-show Prep",
+   "date": "2026-11-16",
+   "start": "19:30",
+   "kind": "Internal",
+   "venue": "Suite 161, Sonesta ES Suites Orlando - International Drive",
+   "address": "Sonesta ES Suites Orlando International Drive, 8480 International Drive, Orlando, FL",
+   "audience": "Invited only",
+   "invited": "Steven Howes, Max Huber, Jamie Davenport, Jozsef Jakub, Amy Lague, Dan Reed, Charlie Edwards, Nathaly Riano-Gomez"
+  },
+  {
+   "id": "big-show-wrap-up",
+   "title": "Big Show Wrap Up",
+   "date": "2026-11-19",
+   "start": "18:30",
+   "end": "22:00",
+   "kind": "GS sponsored",
+   "host": "Turfway",
+   "venue": "Andretti Indoor Karting & Games",
+   "address": "9299 Universal Blvd, Orlando, FL 32819, United States",
+   "link": "https://bigshowwrapup.com/",
+   "audience": "Invited only",
+   "invited": "Nathaly Riano-Gomez, Max Huber, Dan Reed, Steven Howes",
+   "notes": "Greenspan XP is a Gold Sponsor. Clients are invited."
   }
  ]
 });
