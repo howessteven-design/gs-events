@@ -458,6 +458,8 @@ function daysOnSite(name){
    Those two days are expensed separately; every day in between earns the daily allowance. */
 function expRate(){ const ex = EVENT.expenses; return ex && Number(ex.perDay) > 0 ? Number(ex.perDay) : 0; }
 function expSymbol(){ return (EVENT.expenses && EVENT.expenses.symbol) || '\u00a3'; }
+function expRateFor(name){ const p = (EVENT.people||[]).find(x=>x.name===name); return p && Number(p.allowanceRate) > 0 ? Number(p.allowanceRate) : expRate(); }   // person's own rate wins
+function expSymFor(name){ const p = (EVENT.people||[]).find(x=>x.name===name); return p && p.allowanceSymbol ? p.allowanceSymbol : expSymbol(); }
 function expOn(name){ const p = (EVENT.people||[]).find(x=>x.name===name); return !!(p && p.allowance === 'Yes'); }
 function fmtMoney(sym, n){ n = Math.round(n*100)/100; return sym + (Number.isInteger(n) ? n.toLocaleString('en-GB') : n.toLocaleString('en-GB', { minimumFractionDigits:2, maximumFractionDigits:2 })); }
 function addDaysISO(iso, n){ return new Date(parseISO(iso).getTime() + n*86400000).toISOString().slice(0,10); }
@@ -466,13 +468,14 @@ function expWindow(name){
   const fl = flights.filter(f=>f.name===name);
   const outs = fl.filter(f=>f.direction==='Outbound' && f.arriveDate).map(f=>f.arriveDate);
   const rets = fl.filter(f=>f.direction==='Return' && (f.arriveDate || f.departDate)).map(f=>f.arriveDate || f.departDate);
+  const rate = expRateFor(name), sym = expSymFor(name);
   const first = outs.length ? outs.reduce((x,y)=>x>y?x:y) : '';                 // landing day of the last outbound leg
   let last = rets.length ? rets.reduce((x,y)=>x>y?x:y) : '';                    // landing day of the last return leg
   if (!last && p && p.lastTravelDay) last = p.lastTravelDay;                      // manual last travel day (no return flight entered)
-  if (!first) return { name, ok:false, need:'Arrival flight needed', first, last, days:0, dates:[], total:0 };
-  if (!last)  return { name, ok:false, need:'Return date needed', first, last, days:0, dates:[], total:0 };
+  if (!first) return { name, ok:false, need:'Arrival flight needed', first, last, days:0, dates:[], total:0, rate, sym };
+  if (!last)  return { name, ok:false, need:'Return date needed', first, last, days:0, dates:[], total:0, rate, sym };
   const dates = []; for (let d = addDaysISO(first, 1); d < last; d = addDaysISO(d, 1)) dates.push(d);
-  return { name, ok:true, first, last, days:dates.length, dates, total:dates.length * expRate() };
+  return { name, ok:true, first, last, days:dates.length, dates, total:dates.length * rate, rate, sym };
 }
 function renderPeopleNotice(){
   $('peopleNotice').innerHTML = EVENT.peopleNotice ? `<div class="notice info">${EVENT.peopleNotice}</div>` : '';
@@ -546,7 +549,7 @@ function renderPersonExpense(name){
   if (!el){ el = document.createElement('div'); el.id = 'personExpBlock'; el.className = 'summary-block'; const ref = $('personFlightsBlock'); ref.parentNode.insertBefore(el, ref.nextSibling); }
   if (!expOn(name)){ el.style.display = 'none'; el.innerHTML = ''; return; }
   el.style.display = '';
-  const w = expWindow(name), rate = expRate(), sym = expSymbol();
+  const w = expWindow(name), rate = w.rate, sym = w.sym;
   let body;
   if (!w.ok) body = `<div class="empty-note">${escapeHtml(w.need)}, so the allowance cannot be worked out yet.</div>`;
   else if (!rate) body = `<div class="empty-note">Daily rate not set yet.</div>`;
@@ -740,18 +743,21 @@ function renderActions(){
 }
 
 function renderExpenses(){
-  const ex = EVENT.expenses, rate = expRate(), sym = expSymbol();
-  $('expensesPanel').style.display = (rate || (EDIT && ex)) ? '' : 'none';
-  if (!(rate || (EDIT && ex))) return;
-  $('expensesIntro').textContent = rate
-    ? `${fmtMoney(sym, rate)} a day for each full day between a person's first and last travel day. The two travel days are expensed separately. Only people set up for the allowance are listed (Staff tab, Edit person).`
+  const ex = EVENT.expenses, rate = expRate();
+  const ws = getAllNames().filter(expOn).map(expWindow);
+  const anyRate = rate > 0 || ws.some(w=>w.rate > 0);
+  $('expensesPanel').style.display = (anyRate || (EDIT && ex)) ? '' : 'none';
+  if (!(anyRate || (EDIT && ex))) return;
+  const own = ws.filter(w=>w.rate > 0 && (w.rate !== rate || w.sym !== expSymbol())).length;
+  $('expensesIntro').textContent = anyRate
+    ? `${rate ? fmtMoney(expSymbol(), rate) + ' a day' : 'Daily allowance'} for each full day between a person's first and last travel day${own ? ' (some people have their own rate or currency)' : ''}. The two travel days are expensed separately. Only people set up for the allowance are listed (Staff tab, Edit person).`
     : 'Daily rate not set yet. Add it under Event details (edit mode) to switch the allowance on.';
   $('expensesNote').innerHTML = ex && ex.note ? `<div class="notice info" style="margin:14px 22px 0;">${ex.note}</div>` : '';
-  const ws = getAllNames().filter(expOn).map(expWindow);
-  const total = ws.reduce((t,w)=>t + (w.ok ? w.total : 0), 0);
-  $('expensesCount').textContent = ws.length && rate ? `Total ${fmtMoney(sym, total)}` : '';
+  const totals = {};   // one total per currency - never add pounds to dollars
+  ws.forEach(w=>{ if (w.ok && w.rate) totals[w.sym] = (totals[w.sym]||0) + w.total; });
+  $('expensesCount').textContent = ws.length && anyRate ? 'Total ' + Object.keys(totals).map(s=>fmtMoney(s, totals[s])).join(' + ') : '';
   $('expensesBody').innerHTML = ws.length ? ws.map(w=>`
-    <tr><td data-label="Name"><b>${escapeHtml(w.name)}</b></td><td data-label="Days">${w.ok ? w.days : `<span class="empty-note">${escapeHtml(w.need)}</span>`}</td><td data-label="Amount owed"><b>${w.ok && rate ? fmtMoney(sym, w.total) : '&ndash;'}</b></td></tr>`).join('')
+    <tr><td data-label="Name"><b>${escapeHtml(w.name)}</b></td><td data-label="Days">${w.ok ? w.days : `<span class="empty-note">${escapeHtml(w.need)}</span>`}</td><td data-label="Amount owed"><b>${w.ok && w.rate ? fmtMoney(w.sym, w.total) : '&ndash;'}</b></td></tr>`).join('')
     : `<tr class="empty"><td colspan="3">No one is set up for the daily allowance yet.</td></tr>`;
 }
 
@@ -791,7 +797,7 @@ function drawExpenseCard(ctx, W, H, d){
   const gw = ctx.measureText('Greenspan').width; ctx.fillStyle = '#7B5CF0'; ctx.fillText('XP', X + gw + 4, 1052);
 }
 async function openExpenseCard(name){
-  const w = expWindow(name), rate = expRate(), sym = expSymbol();
+  const w = expWindow(name), rate = w.rate, sym = w.sym;
   if (!expOn(name) || !w.ok || !rate) return;
   try { await Promise.all([document.fonts.load('800 40px Inter'), document.fonts.load('600 30px Inter')]); } catch(e){}
   const W = 900, H = 1120, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
@@ -817,7 +823,6 @@ async function openExpenseCard(name){
 
 /* ---------- expenses Excel (editors only - button lives in the edit bar) ---------- */
 function exportExpensesExcel(){
-  const sym = expSymbol(), rate = expRate();
   const ws = getAllNames().filter(expOn).map(expWindow);
   if (!ws.length){ alert('No one is set up for the daily allowance yet. Edit a person and set "Daily expense allowance" to Yes.'); return; }
   const good = ws.filter(w=>w.ok);
@@ -826,24 +831,28 @@ function exportExpensesExcel(){
   const dates = []; for (let d = start; d <= end; d = addDaysISO(d, 1)) dates.push(d);
   const nD = dates.length, colDays = 1 + nD, colAmt = 2 + nD;               // zero-based column indexes
   const L = c => XLSX.utils.encode_col(c);
-  const rateRow = ws.length + 3;                                              // 1-based row holding the daily rate
+  // one daily-rate cell per distinct rate + currency, listed under the table; each person's amount points at theirs
+  const rates = []; ws.forEach(w=>{ const k = w.sym + '|' + w.rate; if (!rates.some(r=>r.k===k)) rates.push({ k, sym:w.sym, rate:w.rate }); });
+  const rateRow0 = ws.length + 2;                                             // zero-based row of the first rate line
   const aoa = [['Name', ...dates.map(d=>new Date(d + 'T00:00:00')), 'Total allowance days', 'Total amount']];
   ws.forEach(w=>aoa.push([w.name, ...dates.map(d=> !w.ok ? '' : (d === w.first || d === w.last) ? 'Travel' : w.dates.includes(d) ? 'Allowance' : ''), '', '']));
-  aoa.push([]); aoa.push(['Daily rate', rate || '']);
+  aoa.push([]);
+  rates.forEach(r=>aoa.push([rates.length > 1 ? `Daily rate (${r.sym})` : 'Daily rate', r.rate || '']));
   const sheet = XLSX.utils.aoa_to_sheet(aoa);
   for (let c = 1; c <= nD; c++){ const cell = sheet[XLSX.utils.encode_cell({ r:0, c })]; if (cell) cell.z = 'ddd d mmm'; }
-  const money = sym + '#,##0.00';
+  const money = s => s + '#,##0.00';
   ws.forEach((w, i)=>{
     const r = i + 1, rowN = r + 1;
     if (w.ok){
+      const rr = rates.findIndex(x=>x.k === w.sym + '|' + w.rate);
       sheet[XLSX.utils.encode_cell({ r, c:colDays })] = { t:'n', v:w.days, f:`COUNTIF(${L(1)}${rowN}:${L(nD)}${rowN},"Allowance")` };
-      sheet[XLSX.utils.encode_cell({ r, c:colAmt })]  = { t:'n', v:w.total, f:`${L(colDays)}${rowN}*$B$${rateRow}`, z:money };
+      sheet[XLSX.utils.encode_cell({ r, c:colAmt })]  = { t:'n', v:w.total, f:`${L(colDays)}${rowN}*$B$${rateRow0 + rr + 1}`, z:money(w.sym) };
     } else {
       sheet[XLSX.utils.encode_cell({ r, c:colDays })] = { t:'s', v:w.need };
     }
   });
-  const rc = sheet[XLSX.utils.encode_cell({ r:rateRow - 1, c:1 })]; if (rc && rate) rc.z = money;
-  sheet['!ref'] = XLSX.utils.encode_range({ s:{ r:0, c:0 }, e:{ r:rateRow - 1, c:colAmt } });
+  rates.forEach((x, i)=>{ const c = sheet[XLSX.utils.encode_cell({ r:rateRow0 + i, c:1 })]; if (c && x.rate) c.z = money(x.sym); });
+  sheet['!ref'] = XLSX.utils.encode_range({ s:{ r:0, c:0 }, e:{ r:rateRow0 + rates.length - 1, c:colAmt } });
   sheet['!cols'] = [{ wch:24 }, ...dates.map(()=>({ wch:11 })), { wch:20 }, { wch:14 }];
   const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, sheet, 'Expenses');
   XLSX.writeFile(wb, `${EVENT.id}_expenses.xlsx`);
