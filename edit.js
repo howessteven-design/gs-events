@@ -14,7 +14,12 @@
     people:{ label:'person', fields:[
       {k:'name', l:'Name', t:'text', req:1},
       {k:'types', l:'Staff type (tick all that apply)', t:'checks', o:TYPES, req:1,
-       get:o=>o.types||[], set:(o,v)=>{ o.types = TYPES.filter(t=>v.includes(t)); } } ],
+       get:o=>o.types||[], set:(o,v)=>{ o.types = TYPES.filter(t=>v.includes(t)); } },
+      {k:'allowance', l:'Daily expense allowance', t:'select', o:['No','Yes'], half:1,
+       hint:'Yes = this person is on the daily allowance (needs the daily rate set under Event details).',
+       set:(o,v)=>{ if (v==='Yes') o.allowance = 'Yes'; else delete o.allowance; } },
+      {k:'lastTravelDay', l:'Last travel day (only if no return flight is entered)', t:'date', half:1,
+       hint:'Used for the allowance when there is no return flight, e.g. someone travelling on after the show.' } ],
       defaults:()=>({ types:[] }) },
     shifts:{ label:'shift', fields:[
       {k:'name', l:'Staff name', t:'text', req:1, list:'names'},
@@ -116,7 +121,8 @@
     {k:'accessNotice', l:'Rota notice, e.g. access hours (HTML allowed)', t:'textarea', rows:3},
     {k:'peopleNotice', l:'Staff tab notice (HTML allowed)', t:'textarea', rows:2},
     {k:'expSymbol', l:'Allowance currency symbol', t:'text', half:1, get:o=>o.expenses ? o.expenses.symbol : '', set:()=>{} },
-    {k:'expPerDay', l:'Allowance per day (blank = hide panel)', t:'number', half:1, get:o=>o.expenses ? o.expenses.perDay : '', set:()=>{} },
+    {k:'expPerDay', l:'Allowance per day (blank = allowance off)', t:'number', half:1, get:o=>o.expenses ? o.expenses.perDay : '', set:()=>{} },
+    {k:'expTitle', l:'Allowance card heading', t:'text', get:o=>o.expenses ? (o.expenses.title||'') : '', set:()=>{} },
     {k:'expNote', l:'Allowance note (HTML allowed)', t:'textarea', rows:2, get:o=>o.expenses ? (o.expenses.note||'') : '', set:()=>{} }
   ];
 
@@ -269,9 +275,10 @@
       const sym = readField(EVENT_FIELDS.find(f=>f.k==='expSymbol'));
       const per = readField(EVENT_FIELDS.find(f=>f.k==='expPerDay'));
       const note = readField(EVENT_FIELDS.find(f=>f.k==='expNote'));
+      const xtitle = readField(EVENT_FIELDS.find(f=>f.k==='expTitle'));
       applyFields(EVENT, EVENT_FIELDS.filter(f=>!/^exp/.test(f.k)));
-      if (per === '') EVENT.expenses = null;
-      else { EVENT.expenses = { symbol: sym || '$', perDay: Number(per) }; if (note) EVENT.expenses.note = note; }
+      if (per === '' && !xtitle && !note) EVENT.expenses = null;
+      else { EVENT.expenses = { symbol: sym || '\u00a3' }; if (per !== '') EVENT.expenses.perDay = Number(per); if (xtitle) EVENT.expenses.title = xtitle; if (note) EVENT.expenses.note = note; }
       if (!EVENT.title) EVENT.title = EVENT.label;
       refreshSelect();
       renderTabs();
@@ -539,6 +546,7 @@
         <button class="btn" type="button" data-eb="newevent">${svg('plus',14)} New event</button>
         <button class="btn" type="button" data-eb="import">${svg('download',14)} Import Excel</button>
         <button class="btn" type="button" data-eb="template">${svg('download',14)} Template</button>
+        <button class="btn" type="button" data-eb="expxlsx">${svg('download',14)} Expenses Excel</button>
         <button class="btn ${d?'attn':''}" type="button" data-eb="download">${svg('download',14)} Download event file</button>
       </div>
       <div class="eb-note">Changes live in this browser tab only until you download the file and commit it to GitHub; Netlify then updates the live app for everyone.${
@@ -556,6 +564,7 @@
     else if (t.dataset.eb==='newevent') openNewEvent();
     else if (t.dataset.eb==='import') document.getElementById('importFile').click();
     else if (t.dataset.eb==='template'){ const a = document.createElement('a'); a.href = 'templates/StaffTemplate.xlsx'; a.download = 'StaffTemplate.xlsx'; document.body.appendChild(a); a.click(); a.remove(); }
+    else if (t.dataset.eb==='expxlsx') exportExpensesExcel();
     else if (t.dataset.eb==='download') downloadEvent();
   });
   window.addEventListener('beforeunload', e=>{ if (dirty.size){ e.preventDefault(); e.returnValue = ''; } });

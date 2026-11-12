@@ -452,6 +452,28 @@ function getAllNames(){
 function daysOnSite(name){
   return new Set(effectiveShifts().filter(s=>s.name===name && s.activity!=='Off').map(s=>s.date)).size;
 }
+/* ---------- expense allowance ----------
+   Applies only to people ticked "Daily expense allowance: Yes" (edit mode, Staff tab -> Edit person).
+   Travel days = the day they land on their first outbound flight and the day they land on their last return flight.
+   Those two days are expensed separately; every day in between earns the daily allowance. */
+function expRate(){ const ex = EVENT.expenses; return ex && Number(ex.perDay) > 0 ? Number(ex.perDay) : 0; }
+function expSymbol(){ return (EVENT.expenses && EVENT.expenses.symbol) || '\u00a3'; }
+function expOn(name){ const p = (EVENT.people||[]).find(x=>x.name===name); return !!(p && p.allowance === 'Yes'); }
+function fmtMoney(sym, n){ n = Math.round(n*100)/100; return sym + (Number.isInteger(n) ? n.toLocaleString('en-GB') : n.toLocaleString('en-GB', { minimumFractionDigits:2, maximumFractionDigits:2 })); }
+function addDaysISO(iso, n){ return new Date(parseISO(iso).getTime() + n*86400000).toISOString().slice(0,10); }
+function expWindow(name){
+  const p = (EVENT.people||[]).find(x=>x.name===name);
+  const fl = flights.filter(f=>f.name===name);
+  const outs = fl.filter(f=>f.direction==='Outbound' && f.arriveDate).map(f=>f.arriveDate);
+  const rets = fl.filter(f=>f.direction==='Return' && (f.arriveDate || f.departDate)).map(f=>f.arriveDate || f.departDate);
+  const first = outs.length ? outs.reduce((x,y)=>x>y?x:y) : '';                 // landing day of the last outbound leg
+  let last = rets.length ? rets.reduce((x,y)=>x>y?x:y) : '';                    // landing day of the last return leg
+  if (!last && p && p.lastTravelDay) last = p.lastTravelDay;                      // manual last travel day (no return flight entered)
+  if (!first) return { name, ok:false, need:'Arrival flight needed', first, last, days:0, dates:[], total:0 };
+  if (!last)  return { name, ok:false, need:'Return date needed', first, last, days:0, dates:[], total:0 };
+  const dates = []; for (let d = addDaysISO(first, 1); d < last; d = addDaysISO(d, 1)) dates.push(d);
+  return { name, ok:true, first, last, days:dates.length, dates, total:dates.length * expRate() };
+}
 function renderPeopleNotice(){
   $('peopleNotice').innerHTML = EVENT.peopleNotice ? `<div class="notice info">${EVENT.peopleNotice}</div>` : '';
 }
@@ -459,7 +481,6 @@ function renderPeople(){
   const names = getAllNames();
   const grid = $('peopleGrid');
   if (!names.length){ grid.innerHTML = `<div class="empty-note">No staff added for this event yet.</div>`; return; }
-  const ex = EVENT.expenses;
   grid.innerHTML = names.map(name=>{
     const types = personTypes(name);
     const fs = flightStatus(name);
@@ -474,7 +495,7 @@ function renderPeople(){
         <div class="ptags">
           ${typeBadges(name)}
         </div>
-        <div class="pmeta"><span><b style="color:var(--ink);">${days}</b> day${days===1?'':'s'} on site${ex ? ` &middot; ${ex.symbol}${days*ex.perDay} allowance` : ''}</span><span style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge ${accClass}" style="font-size:11px;">${escapeHtml(accLabel)}</span><span class="badge ${fs.cls}" style="font-size:11px;">${fs.label}</span></span></div>
+        <div class="pmeta"><span><b style="color:var(--ink);">${days}</b> day${days===1?'':'s'} on site</span><span style="display:flex; gap:6px; flex-wrap:wrap;"><span class="badge ${accClass}" style="font-size:11px;">${escapeHtml(accLabel)}</span><span class="badge ${fs.cls}" style="font-size:11px;">${fs.label}</span></span></div>
       </button>`;
   }).join('');
   bindPeople(grid);
@@ -516,8 +537,25 @@ function openPersonModal(name){
       ${f.ref ? `<div class="ar-detail">Ref: ${escapeHtml(f.ref)}</div>` : ''}
       ${f.notes ? `<div class="ar-detail">${escapeHtml(f.notes)}</div>` : ''}
     </div>`).join('');
+  renderPersonExpense(name);
   $('personModalBackdrop').classList.add('show');
   if (window.onPersonModal) window.onPersonModal(name);
+}
+function renderPersonExpense(name){
+  let el = $('personExpBlock');
+  if (!el){ el = document.createElement('div'); el.id = 'personExpBlock'; el.className = 'summary-block'; const ref = $('personFlightsBlock'); ref.parentNode.insertBefore(el, ref.nextSibling); }
+  if (!expOn(name)){ el.style.display = 'none'; el.innerHTML = ''; return; }
+  el.style.display = '';
+  const w = expWindow(name), rate = expRate(), sym = expSymbol();
+  let body;
+  if (!w.ok) body = `<div class="empty-note">${escapeHtml(w.need)}, so the allowance cannot be worked out yet.</div>`;
+  else if (!rate) body = `<div class="empty-note">Daily rate not set yet.</div>`;
+  else body = `<div class="accom-row">
+      <div class="ar-top"><span class="badge both">${w.days} allowance day${w.days===1?'':'s'}</span><span class="ar-detail">${w.days ? `${fmtDate(w.dates[0])} &ndash; ${fmtDate(w.dates[w.dates.length-1])}` : ''}</span></div>
+      <div class="ar-detail"><b style="color:var(--ink);">${w.days} &times; ${fmtMoney(sym, rate)} = ${fmtMoney(sym, w.total)}</b> &middot; travel days ${fmtDate(w.first)} and ${fmtDate(w.last)} are expensed separately</div>
+      <div style="margin-top:10px;"><button class="btn" type="button" data-exp-card="${escapeHtml(name)}">Open expense card</button></div>
+    </div>`;
+  el.innerHTML = `<h4>Expense allowance</h4>${body}`;
 }
 function closePersonModal(){ $('personModalBackdrop').classList.remove('show'); }
 
@@ -699,18 +737,113 @@ function renderActions(){
 }
 
 function renderExpenses(){
-  const ex = EVENT.expenses;
-  $('expensesPanel').style.display = ex ? '' : 'none';
-  if (!ex) return;
-  $('expensesIntro').textContent = `${ex.symbol}${ex.perDay}/day for every day on the rota that isn't marked "Off" - calculated automatically from the Staff Rota tab.`;
-  $('expensesNote').innerHTML = ex.note ? `<div class="notice info" style="margin:14px 22px 0;">${ex.note}</div>` : '';
-  const names = [...new Set(shifts.map(s=>s.name))].sort((a,b)=>a.localeCompare(b));
-  const rows = names.map(n=>({ name:n, days:daysOnSite(n) }));
-  const total = rows.reduce((t,r)=>t + r.days*ex.perDay, 0);
-  $('expensesCount').textContent = rows.length ? `Total ${ex.symbol}${total}` : '';
-  $('expensesBody').innerHTML = rows.length ? rows.map(r=>`
-    <tr><td data-label="Name"><b>${escapeHtml(r.name)}</b></td><td data-label="Days">${r.days}</td><td data-label="Amount owed"><b>${ex.symbol}${r.days*ex.perDay}</b></td></tr>`).join('')
-    : `<tr class="empty"><td colspan="3">No staff yet.</td></tr>`;
+  const ex = EVENT.expenses, rate = expRate(), sym = expSymbol();
+  $('expensesPanel').style.display = (rate || (EDIT && ex)) ? '' : 'none';
+  if (!(rate || (EDIT && ex))) return;
+  $('expensesIntro').textContent = rate
+    ? `${fmtMoney(sym, rate)} a day for each full day between a person's first and last travel day. The two travel days are expensed separately. Only people set up for the allowance are listed (Staff tab, Edit person).`
+    : 'Daily rate not set yet. Add it under Event details (edit mode) to switch the allowance on.';
+  $('expensesNote').innerHTML = ex && ex.note ? `<div class="notice info" style="margin:14px 22px 0;">${ex.note}</div>` : '';
+  const ws = getAllNames().filter(expOn).map(expWindow);
+  const total = ws.reduce((t,w)=>t + (w.ok ? w.total : 0), 0);
+  $('expensesCount').textContent = ws.length && rate ? `Total ${fmtMoney(sym, total)}` : '';
+  $('expensesBody').innerHTML = ws.length ? ws.map(w=>`
+    <tr><td data-label="Name"><b>${escapeHtml(w.name)}</b></td><td data-label="Days">${w.ok ? w.days : `<span class="empty-note">${escapeHtml(w.need)}</span>`}</td><td data-label="Amount owed"><b>${w.ok && rate ? fmtMoney(sym, w.total) : '&ndash;'}</b></td></tr>`).join('')
+    : `<tr class="empty"><td colspan="3">No one is set up for the daily allowance yet.</td></tr>`;
+}
+
+/* ---------- expense card (image people can screenshot or save) ---------- */
+function drawExpenseCard(ctx, W, H, d){
+  const FONT = 'Inter, "Segoe UI", Helvetica, Arial, sans-serif';
+  const bg = ctx.createLinearGradient(0, 0, W, H); bg.addColorStop(0, '#0F152F'); bg.addColorStop(1, '#1A2350');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+  const bar = ctx.createLinearGradient(0, 0, W, 0);
+  [['0','#35D6D0'],['.38','#7B5CF0'],['.72','#E8507A'],['1','#F4845A']].forEach(s=>bar.addColorStop(Number(s[0]), s[1]));
+  ctx.fillStyle = bar; ctx.fillRect(0, 0, W, 14);
+  const fit = (txt, weight, size, maxW)=>{ let s = size; ctx.font = `${weight} ${s}px ${FONT}`; while (ctx.measureText(txt).width > maxW && s > 18){ s -= 2; ctx.font = `${weight} ${s}px ${FONT}`; } };
+  ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
+  const X = 72, R = W - 72, MW = W - 144;
+  ctx.fillStyle = '#8FA2FF'; fit(d.title.toUpperCase(), 700, 30, MW); ctx.fillText(d.title.toUpperCase(), X, 120);
+  ctx.fillStyle = '#FFFFFF'; fit('Expense Allowance', 800, 72, MW); ctx.fillText('Expense Allowance', X, 210);
+  ctx.fillStyle = '#35D6D0'; fit(d.name, 700, 48, MW); ctx.fillText(d.name, X, 288);
+  ctx.fillStyle = 'rgba(255,255,255,.16)'; ctx.fillRect(X, 330, MW, 2);
+  // rows
+  const row = (label, sub, value, y)=>{
+    ctx.fillStyle = '#9AA6C4'; ctx.font = `600 30px ${FONT}`; ctx.textAlign = 'left'; ctx.fillText(label, X, y);
+    if (sub){ ctx.fillStyle = '#6E7BA0'; ctx.font = `500 24px ${FONT}`; ctx.fillText(sub, X, y + 38); }
+    ctx.fillStyle = '#FFFFFF'; ctx.font = `800 54px ${FONT}`; ctx.textAlign = 'right'; ctx.fillText(value, R, y + (sub ? 18 : 12));
+  };
+  row('Allowance days', d.range, String(d.days), 420);
+  row('Daily allowance', '', d.rate, 560);
+  // total panel
+  const py = 650, ph = 270;
+  ctx.fillStyle = 'rgba(255,255,255,.07)'; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(X, py, MW, ph, 28) : ctx.rect(X, py, MW, ph); ctx.fill();
+  ctx.strokeStyle = 'rgba(53,214,208,.55)'; ctx.lineWidth = 3; ctx.stroke();
+  ctx.textAlign = 'center'; ctx.fillStyle = '#9AA6C4'; ctx.font = `600 30px ${FONT}`; ctx.fillText('TOTAL', W/2, py + 70);
+  ctx.fillStyle = '#35D6D0'; fit(d.total, 800, 132, MW - 60); ctx.fillText(d.total, W/2, py + 200);
+  // footer
+  ctx.textAlign = 'left'; ctx.fillStyle = '#6E7BA0'; ctx.font = `500 22px ${FONT}`;
+  ctx.fillText('Travel days are expensed separately', X, 1000);
+  ctx.fillStyle = '#FFFFFF'; ctx.font = `800 30px ${FONT}`; ctx.fillText('Greenspan', X, 1052);
+  const gw = ctx.measureText('Greenspan').width; ctx.fillStyle = '#7B5CF0'; ctx.fillText('XP', X + gw + 4, 1052);
+}
+async function openExpenseCard(name){
+  const w = expWindow(name), rate = expRate(), sym = expSymbol();
+  if (!expOn(name) || !w.ok || !rate) return;
+  try { await Promise.all([document.fonts.load('800 40px Inter'), document.fonts.load('600 30px Inter')]); } catch(e){}
+  const W = 900, H = 1120, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  drawExpenseCard(cv.getContext('2d'), W, H, {
+    title: (EVENT.expenses && EVENT.expenses.title) || EVENT.label, name,
+    days: w.days, range: w.days ? `${fmtDate(w.dates[0])} \u2013 ${fmtDate(w.dates[w.dates.length-1])}` : '',
+    rate: fmtMoney(sym, rate), total: fmtMoney(sym, w.total) });
+  const url = cv.toDataURL('image/png');
+  const bd = document.createElement('div'); bd.className = 'modal-backdrop show';
+  bd.innerHTML = `<div class="modal" role="dialog" aria-modal="true" style="max-width:560px;">
+    <img src="${url}" alt="Expense allowance card for ${escapeHtml(name)}" style="display:block; margin:0 auto; max-width:100%; max-height:72vh; width:auto; height:auto; border-radius:14px;">
+    <div class="modal-actions"><button class="btn" type="button" data-x="close">Close</button><button class="btn primary" type="button" data-x="save">Save image</button></div></div>`;
+  document.body.appendChild(bd);
+  bd.addEventListener('click', e=>{
+    if (e.target === bd || e.target.closest('[data-x="close"]')) bd.remove();
+    else if (e.target.closest('[data-x="save"]')){
+      cv.toBlob(b=>{ const a = document.createElement('a'); a.href = URL.createObjectURL(b);
+        a.download = name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') + '-expense-allowance.png';
+        document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href), 2000); }, 'image/png');
+    }
+  });
+}
+
+/* ---------- expenses Excel (editors only - button lives in the edit bar) ---------- */
+function exportExpensesExcel(){
+  const sym = expSymbol(), rate = expRate();
+  const ws = getAllNames().filter(expOn).map(expWindow);
+  if (!ws.length){ alert('No one is set up for the daily allowance yet. Edit a person and set "Daily expense allowance" to Yes.'); return; }
+  const good = ws.filter(w=>w.ok);
+  if (!good.length){ alert('None of the people on the allowance have both an arrival flight and a return date yet.'); return; }
+  const start = good.map(w=>w.first).reduce((x,y)=>x<y?x:y), end = good.map(w=>w.last).reduce((x,y)=>x>y?x:y);
+  const dates = []; for (let d = start; d <= end; d = addDaysISO(d, 1)) dates.push(d);
+  const nD = dates.length, colDays = 1 + nD, colAmt = 2 + nD;               // zero-based column indexes
+  const L = c => XLSX.utils.encode_col(c);
+  const rateRow = ws.length + 3;                                              // 1-based row holding the daily rate
+  const aoa = [['Name', ...dates.map(d=>new Date(d + 'T00:00:00')), 'Total allowance days', 'Total amount']];
+  ws.forEach(w=>aoa.push([w.name, ...dates.map(d=> !w.ok ? '' : (d === w.first || d === w.last) ? 'Travel' : w.dates.includes(d) ? 'Allowance' : ''), '', '']));
+  aoa.push([]); aoa.push(['Daily rate', rate || '']);
+  const sheet = XLSX.utils.aoa_to_sheet(aoa);
+  for (let c = 1; c <= nD; c++){ const cell = sheet[XLSX.utils.encode_cell({ r:0, c })]; if (cell) cell.z = 'ddd d mmm'; }
+  const money = sym + '#,##0.00';
+  ws.forEach((w, i)=>{
+    const r = i + 1, rowN = r + 1;
+    if (w.ok){
+      sheet[XLSX.utils.encode_cell({ r, c:colDays })] = { t:'n', v:w.days, f:`COUNTIF(${L(1)}${rowN}:${L(nD)}${rowN},"Allowance")` };
+      sheet[XLSX.utils.encode_cell({ r, c:colAmt })]  = { t:'n', v:w.total, f:`${L(colDays)}${rowN}*$B$${rateRow}`, z:money };
+    } else {
+      sheet[XLSX.utils.encode_cell({ r, c:colDays })] = { t:'s', v:w.need };
+    }
+  });
+  const rc = sheet[XLSX.utils.encode_cell({ r:rateRow - 1, c:1 })]; if (rc && rate) rc.z = money;
+  sheet['!ref'] = XLSX.utils.encode_range({ s:{ r:0, c:0 }, e:{ r:rateRow - 1, c:colAmt } });
+  sheet['!cols'] = [{ wch:24 }, ...dates.map(()=>({ wch:11 })), { wch:20 }, { wch:14 }];
+  const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, sheet, 'Expenses');
+  XLSX.writeFile(wb, `${EVENT.id}_expenses.xlsx`);
 }
 
 /* ---------- Excel export ---------- */
@@ -766,6 +899,7 @@ function exportExcel(){
 }
 
 /* ---------- wiring ---------- */
+document.addEventListener('click', ev=>{ const b = ev.target.closest('[data-exp-card]'); if (b) openExpenseCard(b.getAttribute('data-exp-card')); });
 $('personBtnClose').addEventListener('click', closePersonModal);
 $('personModalBackdrop').addEventListener('click', e=>{ if (e.target.id==='personModalBackdrop') closePersonModal(); });
 $('btnExport').addEventListener('click', exportExcel);
