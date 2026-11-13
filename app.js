@@ -245,10 +245,23 @@ function effectiveShifts(){
   const byDate = {}; days.forEach(d=>{ byDate[d.date] = d; });
   // an "On Stand" shift with no times of its own simply means "default hours"
   const out = shifts.map(s=>{ const d = byDate[s.date]; return (d && s.activity==='On Stand' && !s.start && !s.end) ? { ...s, start:d.start, end:d.end, defaulted:true } : s; });
+  const st = (date, time, dflt)=> Math.round(parseISO(date).getTime()/60000) + (toMin(time) ?? toMin(dflt));
   getAllNames().filter(n=>personTypes(n).some(t=>types.includes(t))).forEach(n=>{
+    // default cover only covers days they are actually in Orlando: after they land and before they fly out
+    const fl = flights.filter(f=>f.name===n);
+    const outs = fl.filter(f=>f.direction==='Outbound' && f.arriveDate), rets = fl.filter(f=>f.direction==='Return' && f.departDate);
+    const lastOut = outs.length ? outs.reduce((a,b)=>st(a.arriveDate,a.arriveTime,'12:00') >= st(b.arriveDate,b.arriveTime,'12:00') ? a : b) : null;   // when they arrive
+    const firstRet = rets.length ? rets.reduce((a,b)=>st(a.departDate,a.departTime,'12:00') <= st(b.departDate,b.departTime,'12:00') ? a : b) : null;  // when they leave
+    const person = (EVENT.people||[]).find(p=>p.name===n), pseudo = !rets.length && person && person.lastTravelDay;
     days.forEach(d=>{
       const own = shifts.some(s=>s.name===n && s.date===d.date && !/evening|network|social|dinner|party|travel|flight/i.test(s.activity||''));
-      if (!own) out.push({ id:'v:'+n+':'+d.date, name:n, date:d.date, activity:'On Stand', start:d.start, end:d.end, virtual:true });
+      if (own) return;
+      const s0 = st(d.date, d.start, '10:00'), s1 = st(d.date, d.end, '18:00');
+      let note = '';
+      if (lastOut){ const t = st(lastOut.arriveDate, lastOut.arriveTime, '12:00'); if (t >= s1) return; if (t > s0) note = `Lands ${lastOut.arriveTime || fmtDate(lastOut.arriveDate)}`; }
+      if (firstRet){ const t = st(firstRet.departDate, firstRet.departTime, '12:00'); if (t <= s0) return; if (t < s1) note = (note ? note + '; ' : '') + `Flies ${firstRet.departTime || fmtDate(firstRet.departDate)}`; }
+      if (pseudo && d.date > pseudo) return;
+      out.push({ id:'v:'+n+':'+d.date, name:n, date:d.date, activity:'On Stand', start:d.start, end:d.end, virtual:true, ...(note ? { notes:'Default stand cover. ' + note } : {}) });
     });
   });
   return out;
